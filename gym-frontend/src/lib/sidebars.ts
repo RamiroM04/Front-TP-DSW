@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react"
 import {
   Calendar,
   ClipboardList,
+  CreditCard,
   Dumbbell,
   House,
   NotebookPen,
@@ -26,6 +27,7 @@ export const ROLE_NAVIGATION: Record<
       { to: "/administrativo/", label: "Inicio", icon: House },
       { to: "/administrativo/clases", label: "Clases", icon: Calendar },
       { to: "/administrativo/socios", label: "Socios", icon: Users },
+      { to: "/administrativo/planes", label: "Planes", icon: CreditCard },
     ],
   },
   instructor: {
@@ -48,6 +50,7 @@ export const ROLE_NAVIGATION: Record<
       { to: "/socio/clases", label: "Clases", icon: Calendar },
     ],
   },
+  
 }
 
 export const ADMIN_LINKS = ROLE_NAVIGATION.admin.links
