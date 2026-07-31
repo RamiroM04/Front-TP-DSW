@@ -5,7 +5,6 @@ import {
   RiPencilLine,
 } from "@remixicon/react"
 import { toast } from "sonner"
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -31,7 +30,7 @@ type PlanesDataTableProps = {
   onDelete: (id: string) => void
 }
 
-// Formatea un número como precio en pesos argentinos.
+// Formatea un número como precio.
 function formatPrice(value: number) {
   return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(
     value
