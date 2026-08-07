@@ -4,6 +4,7 @@ import { Dumbbell } from "lucide-react"
 import {
   Sidebar,
   SidebarHeader,
+  SidebarSeparator,
   SidebarContent,
   SidebarMenu,
   SidebarMenuItem,
@@ -20,20 +21,30 @@ type RoleSidebarProps = {
 
 export default function RoleSidebar({
   links,
-  title = "MyGym",
+  title = "MyGymManager",
   footer,
 }: RoleSidebarProps) {
+  const homeLink = links[0]
 
   return (
     <Sidebar side="left" variant="sidebar" collapsible="icon">
       <SidebarHeader className="px-2 py-2">
-        <div className="flex items-center gap-2 rounded-md px-2 py-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
-          <Dumbbell className="size-5 shrink-0" aria-hidden="true" />
-          <span className="font-semibold group-data-[collapsible=icon]:hidden">
-            {title}
-          </span>
-        </div>
+        {homeLink ? (
+          <NavLink
+            to={homeLink.to}
+            end={homeLink.to.endsWith("/")}
+            aria-label={`${title} home`}
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1 transition-[width,padding,gap,margin] duration-200 ease-in-out group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:px-0"
+          >
+            <Dumbbell className="size-6 shrink-0 group-data-[collapsible=icon]:mx-auto" aria-hidden="true" />
+            <span className="max-w-32 overflow-hidden whitespace-nowrap font-semibold opacity-100 transition-[max-width,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0">
+              {title}
+            </span>
+          </NavLink>
+        ) : null}
       </SidebarHeader>
+
+      <SidebarSeparator className="mx-auto my-1 w-[calc(100%-1rem)] transition-[width] duration-200 ease-in-out group-data-[collapsible=icon]:w-6" />
 
       <SidebarContent>
         <SidebarMenu>
@@ -42,7 +53,9 @@ export default function RoleSidebar({
               <SidebarMenuButton asChild tooltip={link.label}>
                 <NavLink to={link.to} end={link.to.endsWith("/")}>
                   {link.icon ? <link.icon aria-hidden="true" /> : null}
-                  <span>{link.label}</span>
+                  <span className="max-w-40 overflow-hidden whitespace-nowrap opacity-100 transition-[max-width,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0">
+                    {link.label}
+                  </span>
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>

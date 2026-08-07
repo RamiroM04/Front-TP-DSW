@@ -1,4 +1,3 @@
-import React from "react"
 import { Outlet } from "react-router-dom"
 import RoleBottomNav from "@/components/RoleBottomNav"
 import RoleSidebar from "@/components/RoleSidebar"
@@ -16,12 +15,11 @@ export default function RoleLayout({
 }: {
   role: AppRole
 }) {
-  const [open, setOpen] = React.useState(false)
   const { links, title } = ROLE_NAVIGATION[role]
-  const systemName = "MyGym"
+  const systemName = "MyGymManager" // TODO: Move to config file
 
   return (
-    <SidebarProvider open={open} onOpenChange={setOpen}>
+    <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <RoleSidebar links={links} title={systemName} />
 
