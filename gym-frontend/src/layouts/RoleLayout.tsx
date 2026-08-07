@@ -16,11 +16,12 @@ export default function RoleLayout({
   role: AppRole
 }) {
   const { links, title } = ROLE_NAVIGATION[role]
+  const systemName = "MyGymManager" // TODO: Move to config file
 
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
-        <RoleSidebar links={links} title={title} />
+        <RoleSidebar links={links} title={systemName} />
 
         <SidebarInset className="flex min-h-screen flex-1 flex-col">
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
