@@ -9,7 +9,7 @@ import {
 import { ROLE_NAVIGATION, type AppRole } from "@/lib/sidebars"
 //import { Avatar } from "@/components/ui/avatar"
 import { Bell, Settings, CircleUser } from "lucide-react"
-import { ThemeToggle } from "@/components/ThemeToggle.tsx"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 export default function RoleLayout({
   role,

@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button'
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
-  const isDark = theme === 'dark'
-
+  const isDark =
+    theme === "system"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+      : theme === "dark"
   return (
     <Button
       variant="ghost"
