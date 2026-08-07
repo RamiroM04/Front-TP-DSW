@@ -9,6 +9,7 @@ import {
 import { ROLE_NAVIGATION, type AppRole } from "@/lib/sidebars"
 //import { Avatar } from "@/components/ui/avatar"
 import { Bell, Settings, CircleUser } from "lucide-react"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 export default function RoleLayout({
   role,
@@ -28,9 +29,10 @@ export default function RoleLayout({
             <SidebarTrigger className="hidden md:inline-flex" />
             <span className="text-lg font-medium">Portal {title}</span>
             <div className="ml-auto flex items-center gap-3">
-              <Bell className="h-6 w-6" /> {/* TODO: Implementar con componente: A notification icon component in React typically combines a SVG bell icon with an absolute-positioned badge element to display the unread alert count*/}
-              <Settings className="h-6 w-6" />
-              <CircleUser className="h-6 w-6" /> {/* TODO: Implementar con componente Avatar */}
+              <ThemeToggle />
+              <Bell className="h-4 w-4" /> {/* TODO: Implementar con componente: A notification icon component in React typically combines a SVG bell icon with an absolute-positioned badge element to display the unread alert count*/}
+              <Settings className="h-4 w-4" />
+              <CircleUser className="h-4 w-4" /> {/* TODO: Implementar con componente Avatar */}
             </div>
           </header>
 
