@@ -1,6 +1,5 @@
 import type { Plan } from "../models/Plan"
 
-// Datos de prueba en memoria, mientras no está conectado al backend real.
 export const mockPlans: Plan[] = [
   {
     id: "plan-basic",

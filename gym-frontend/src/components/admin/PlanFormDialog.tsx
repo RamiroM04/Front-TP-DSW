@@ -27,8 +27,6 @@ export default function PlanFormDialog({
   planToEdit,
   onSave,
 }: PlanFormDialogProps) {
-  // Se inicializa una sola vez, leyendo planToEdit directo (sin useEffect).
-  // El "reseteo" al cambiar de plan lo maneja la prop key desde PlanesPage.
   const [form, setForm] = useState({
     name: planToEdit?.name ?? "",
     price: planToEdit ? String(planToEdit.price) : "",
@@ -41,7 +39,6 @@ export default function PlanFormDialog({
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  // Junta los valores del formulario y se los pasa al padre.
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     onSave(
