@@ -13,13 +13,13 @@ export default function PlanesPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [planToEdit, setPlanToEdit] = useState<Plan | null>(null)
 
-  // Abre el diálogo en modo "crear" (sin plan precargado).
+  // Abre la ventana emergente(Modal) en modo "crear" (sin plan precargado).
   function handleNuevo() {
     setPlanToEdit(null)
     setDialogOpen(true)
   }
 
-  // Abre el diálogo en modo "editar", con el plan elegido precargado.
+  // Abre la ventana emergente(Modal) en modo "editar", con el plan elegido precargado.
   function handleEditar(plan: Plan) {
     setPlanToEdit(plan)
     setDialogOpen(true)
