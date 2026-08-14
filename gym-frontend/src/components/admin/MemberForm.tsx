@@ -4,15 +4,17 @@ import { User } from "lucide-react"
 import { useState, useEffect } from "react"
 import { type Member, type CreateMemberInput, type UpdateMemberInput } from "../../models/Member.ts"
 import { type MembershipPlan } from "../../models/MembershipPlan.ts"
+import { type Membership } from "../../models/Membership.ts"
 type MemberFormProps = {
   showActions?: boolean
   member? : Member
+  membership?: Membership
   onSubmit: (data: CreateMemberInput | UpdateMemberInput) => Promise<void>
   onCancel: () => void
 }
 
 export default function MemberForm({ 
-  showActions = true, member, onSubmit, onCancel}: MemberFormProps) {
+  showActions = true, member, membership,onSubmit, onCancel}: MemberFormProps) {
     const [plans, setPlans] = useState<MembershipPlan[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -27,7 +29,7 @@ export default function MemberForm({
       docNumber: member?.docNumber || '',
       birthDate: member?.birthDate?.split('T')[0] || '',
       status: member?.status || 'ACTIVE',
-      membershipPlanId: 0,
+      membershipPlanId: member ? (membership?.membershipPlanId || 0) : 0,
     })
 
     useEffect(() => {
@@ -59,7 +61,17 @@ export default function MemberForm({
       setError(null)
 
       try{
-        await onSubmit(formData)
+        const dataToSubmit = member?{
+          name: formData.name, 
+          surname: formData.surname,
+          email: formData.email, 
+          phone: formData.phone, 
+          docType: formData.docType, 
+          docNumber: formData.docNumber,
+          birthDate: formData.birthDate, 
+          membershipPlanId: formData.membershipPlanId,
+          status: formData.status} :formData
+        await onSubmit(dataToSubmit)
       }catch(err){
         setError(err instanceof Error ? err.message: 'Error desconocido')
       }finally{
@@ -168,7 +180,7 @@ export default function MemberForm({
           />
         </div>
 
-                <div className="space-y-2">
+        <div className="space-y-2">
           <label htmlFor="phone" className="text-sm font-medium">
             Teléfono
           </label>
@@ -180,8 +192,50 @@ export default function MemberForm({
             onChange={handleChange}
           />
         </div>
+{!member ? (
+  <div className="space-y-2">
+    <label htmlFor="membershipPlanId" className="text-sm font-medium">
+      Plan
+    </label>
+    <select
+      id="membershipPlanId"
+      name="membershipPlanId"
+      value={formData.membershipPlanId}
+      onChange={handleChange}
+      className="w-full px-3 py-2 border border-gray-300 rounded"
+      required
+    >
+      <option value="">Seleccione un plan</option>
+      {plans.map((plan) => (
+        <option key={plan.id} value={plan.id}>
+          {plan.name} - ${plan.price}
+        </option>
+      ))}
+    </select>
+  </div>
+) : (
+  <div className="space-y-2">
+    <label htmlFor="membershipPlanId" className="text-sm font-medium">
+      Plan
+    </label>
+    <select
+      id="membershipPlanId"
+      name="membershipPlanId"
+      value={formData.membershipPlanId}
+      onChange={handleChange}
+      className="w-full px-3 py-2 border border-gray-300 rounded"
+    >
+      {plans.map((plan) => (
+        <option key={plan.id} value={plan.id}>
+          {plan.name} - ${plan.price}
+        </option>
+      ))}
+    </select>
+  </div>
+)}
 
-        <div className="space-y-2">
+
+        {/* <div className="space-y-2">
           <label htmlFor="membershiPlanId" className= "text-sm font-medium">
             Plan*
           </label>
@@ -200,7 +254,7 @@ export default function MemberForm({
               </option>
             ))}
             </select>
-        </div>
+        </div> */}
 
                 <div className="space-y-2">
           <label htmlFor="status" className="text-sm font-medium">

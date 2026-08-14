@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { type CreateMemberInput, type Member, type UpdateMemberInput } from '../../models/Member'
+import  { type Membership } from '../../models/Membership'
 import { memberService } from '@/services/memberService'
 import MemberForm from '../../components/admin/MemberForm'
 import { toast } from 'sonner'
@@ -9,6 +10,7 @@ export default function NewMemberPage(){
   const { id }= useParams<{ id?: string }>()
   const navigate = useNavigate()
   const [member, setMember] = useState<Member | null>(null)
+  const [membership, setMembership] = useState<Membership | null>(null)
   const [loading, setLoading] = useState(!!id)
   const isEditing = !!id
 
@@ -18,6 +20,8 @@ export default function NewMemberPage(){
       try{
         const data = await memberService.getMemberById(Number(id))
         setMember(data)
+        const membershipData = await memberService.getMembershipByMemberId(Number(id))
+        setMembership(membershipData)
       }catch(err){
         const errorMessage = err instanceof Error ? err.message: 'Error desconocido'
         toast.error(errorMessage)
@@ -34,6 +38,13 @@ export default function NewMemberPage(){
     try{
       if(isEditing && id){
         await memberService.update(Number(id), data as UpdateMemberInput)
+        if(membership?.id && 'membershipPlanId' in data && data.membershipPlanId){
+          if(data.membershipPlanId !== membership.membershipPlanId){
+            await memberService.updateMembership(membership.id,{
+              membershipPlanId: data.membershipPlanId as number
+            })
+          }
+        }
         toast.success('Miembro actualizado exitosamente')
       }else{
         await memberService.create(data as CreateMemberInput)
@@ -71,6 +82,7 @@ export default function NewMemberPage(){
       <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
         <MemberForm
         member={member || undefined}
+        membership = {membership || undefined }
         onSubmit={handleSubmit}
         onCancel={() => navigate('/administrativo/socios')}
         />
