@@ -1,5 +1,5 @@
 import { useState } from "react"
-import PlanesDataTable from "@/components/PlanesDataTable"
+import PlansDataTable from "@/components/admin/PlansDataTable"
 import PlanFormDialog from "@/components/admin/PlanFormDialog"
 import { mockPlans } from "@/services/mockPlans"
 import { Button } from "@/components/ui/button"
@@ -7,31 +7,31 @@ import { Badge } from "@/components/ui/badge"
 import { RiAddLine } from "@remixicon/react"
 import type { Plan } from "@/models/Plan"
 
-export default function PlanesPage() {
+export default function PlansPage() {
   // Estado en memoria: hace de "base de datos" mientras no está conectado al backend.
   const [plans, setPlans] = useState<Plan[]>(mockPlans)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [planToEdit, setPlanToEdit] = useState<Plan | null>(null)
 
   // Abre la ventana emergente(Modal) en modo "crear" (sin plan precargado).
-  function handleNuevo() {
+  function handleNew() {
     setPlanToEdit(null)
     setDialogOpen(true)
   }
 
   // Abre la ventana emergente(Modal) en modo "editar", con el plan elegido precargado.
-  function handleEditar(plan: Plan) {
+  function handleEdit(plan: Plan) {
     setPlanToEdit(plan)
     setDialogOpen(true)
   }
 
   // Elimina un plan del estado en memoria.
-  function handleEliminar(id: string) {
+  function handleDelete(id: string) {
     setPlans((prev) => prev.filter((p) => p.id !== id))
   }
 
   // Crea un plan nuevo o actualiza uno existente, según si vino un id.
-  function handleGuardar(datos: Omit<Plan, "id">, id?: string) {
+  function handleSave(datos: Omit<Plan, "id">, id?: string) {
     if (id) {
       setPlans((prev) => prev.map((p) => (p.id === id ? { ...p, ...datos } : p)))
     } else {
@@ -58,7 +58,7 @@ export default function PlanesPage() {
             </div>
           </div>
 
-          <Button size="default" className="w-full md:w-auto md:px-5" onClick={handleNuevo}>
+          <Button size="default" className="w-full md:w-auto md:px-5" onClick={handleNew}>
             <RiAddLine className="mr-1 size-3.5" aria-hidden="true" />
             Nuevo Plan
           </Button>
@@ -66,7 +66,13 @@ export default function PlanesPage() {
       </section>
 
       <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
-        <PlanesDataTable plans={plans} onEdit={handleEditar} onDelete={handleEliminar} />
+        <PlansDataTable
+          plans={plans}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          title="Listado de Planes"
+          subtitle="Planes registrados en el sistema"
+        />
       </div>
 
       <PlanFormDialog
@@ -74,7 +80,7 @@ export default function PlanesPage() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         planToEdit={planToEdit}
-        onSave={handleGuardar}
+        onSave={handleSave}
       />
     </div>
   )
