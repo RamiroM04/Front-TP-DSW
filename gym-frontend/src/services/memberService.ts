@@ -39,7 +39,7 @@ export const memberService = {
   },
 
   async update(id: number, data: UpdateMemberInput): Promise<Member> {
-    const response = await fetch(`${baseUrl}/api/member/${id}`, {
+    const response = await fetch(`${baseUrl}/api/members/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export const memberService = {
   },
 
   async delete(id: number): Promise<void> {
-    const response = await fetch(`${baseUrl}/api/member/${id}`, {
+    const response = await fetch(`${baseUrl}/api/members/${id}`, {
       method: 'DELETE',
     });
     if (!response.ok) {

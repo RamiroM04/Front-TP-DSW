@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { User } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { type Member, type CreateMemberInput, type UpdateMemberInput } from "../../models/Member.ts"
-
+import { type MembershipPlan } from "../../models/MembershipPlan.ts"
 type MemberFormProps = {
   showActions?: boolean
   member? : Member
@@ -13,6 +13,11 @@ type MemberFormProps = {
 
 export default function MemberForm({ 
   showActions = true, member, onSubmit, onCancel}: MemberFormProps) {
+    const [plans, setPlans] = useState<MembershipPlan[]>([])
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+
+
     const [formData, setFormData] = useState<CreateMemberInput>({
       name: member?.name || '',
       surname: member?.surname || '',
@@ -20,20 +25,31 @@ export default function MemberForm({
       phone: member?.phone || '',
       docType: member?.docType || 'DNI',
       docNumber: member?.docNumber || '',
-      birthDate: member?.birthDate.split('T')[0] || '',
-      status: member?.status || 'Activo',
-      plan: member?.plan || 'Basico',
+      birthDate: member?.birthDate?.split('T')[0] || '',
+      status: member?.status || 'ACTIVE',
+      membershipPlanId: 0,
     })
 
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
+    useEffect(() => {
+      const fetchPlans = async() => {
+        try{
+          const response = await fetch('/api/membership-plans')
+          const data = await response.json()
+          setPlans(data)
+        }catch(err){
+          console.error('Error fetching plans:', err)
+        }
+      }
+      fetchPlans()
+    }, [])
+
     const handleChange = (
       e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     ) => {
       const {name, value} = e.target
       setFormData((prev) => ({
         ...prev, 
-        [name]: value,
+        [name]: name === 'membershipPlanId' ? parseInt(value) : value,
       }))
     }
 
@@ -163,6 +179,27 @@ export default function MemberForm({
             value={formData.phone || ''}
             onChange={handleChange}
           />
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="membershiPlanId" className= "text-sm font-medium">
+            Plan*
+          </label>
+          <select
+          id="membershipPlanId"
+          name="membershipPlanId"
+          value={formData.membershipPlanId}
+          onChange={handleChange}
+          className="w-full px-3 py-2 border border-gray-300 rounded"
+          required
+          >
+            <option value="">Seleccione un plan</option>
+            {plans.map((plan)=> (
+              <option key = {plan.id} value={plan.id}>
+                {plan.name} - ${plan.price}
+              </option>
+            ))}
+            </select>
         </div>
 
                 <div className="space-y-2">

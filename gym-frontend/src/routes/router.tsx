@@ -21,6 +21,7 @@ export const router = createBrowserRouter([
       { path: 'clases', element: <AdminClassesPage /> },
       { path: 'socios', element: <MembersPage /> },
       { path: 'socios/nuevo', element: <NewMemberPage /> },
+      { path: 'socios/editar/:id', element:<NewMemberPage/> },
     ],
   },
   {

@@ -1,5 +1,4 @@
-export type Status = 'Activo' | 'Inactivo';
-export type Role = 'Basico' | 'Plus' | 'Premium';
+export type Status = 'ACTIVE' | 'INACTIVE';
 export type DocType = 'DNI' | 'PASAPORTE';
 // Este type esta siendo utilizado por el mockMembers.ts y por la pagina de SociosPage1.tsx
 // TODO: Unificar con el Socio model y controlar consistencia con el backend
@@ -16,7 +15,7 @@ export type Member = {
   email: string;
   phone: string | null;
   status: Status;
-  plan: Role;
+  membershipPlanId: number;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
