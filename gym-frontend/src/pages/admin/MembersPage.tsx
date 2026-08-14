@@ -1,11 +1,11 @@
-import SociosDataTable from "@/components/SociosDataTable"
+import MembersDataTable from "@/components/MembersDataTable"
 import { mockMembers } from "@/services/mockMembers"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { RiAddLine } from "@remixicon/react"
 import { Link } from "react-router-dom"
 
-export default function SociosPage() {
+export default function MembersPage() {
   return (
     <div className="space-y-4">
       <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
@@ -42,7 +42,7 @@ export default function SociosPage() {
       </section>
 
       <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
-        <SociosDataTable title="Listado de Socios" subtitle="Socios registrados en el sistema" initialData={mockMembers} />
+        <MembersDataTable title="Listado de Socios" subtitle="Socios registrados en el sistema" initialData={mockMembers} />
       </div>
     </div>
   )
