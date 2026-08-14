@@ -1,75 +1,12 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { RiAddLine } from '@remixicon/react'
-import { type Member } from '../../models/Member'
-import { memberService } from '@/services/memberService'
-import { toast } from 'sonner'
+import MembersDataTable from "@/components/MembersDataTable"
+import { mockMembers } from "@/services/mockMembers"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { RiAddLine } from "@remixicon/react"
+import { Link } from "react-router-dom"
 
-export default function MembersPage(){
-  const navigate = useNavigate()
-  const [members, setMembers] = useState<Member[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const loadMembers = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await memberService.getAllMembers()
-        setMembers(data)
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
-        setError(errorMessage)
-        toast.error(errorMessage)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadMembers()
-},[])
-
-  const handleDelete = async (id: number) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este miembro?')) return
-    try {
-      await memberService.delete(id)
-      toast.success('Miembro eliminado exitosamente')
-      
-      const updated = await memberService.getAllMembers()
-      setMembers(updated)
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al eliminar'
-      toast.error(errorMessage)
-    }
-  }
-
-    const formatDate = (dateString: string | null) => {
-    if (!dateString) return '-'
-    const date = new Date(dateString)
-    return date.toLocaleDateString('es-AR')
-  }
-
-  // Si está cargando
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            Directorio de Miembros
-          </h1>
-        </section>
-        <div className="rounded-xl border bg-background px-4 py-6 sm:px-6 text-center">
-          <p>Cargando miembros...</p>
-        </div>
-      </div>
-    )
-  }
-  const activeCount = members.filter((m) => m.status === 'ACTIVE').length
-  const inactiveCount = members.filter((m) => m.status === 'INACTIVE').length
-
-  return(
+export default function MembersPage() {
+  return (
     <div className="space-y-4">
       <section className="rounded-xl border bg-backgroun px-4 py-2 sm:px-6 sm:py-6">
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
@@ -79,7 +16,7 @@ export default function MembersPage(){
                 Directorio de Miembros
               </h1>
               <p className="max-w-2xl text-sm sm:text-base">
-                Gestiona los miembros. Podes agregar, editar o eliminar miembros según sea necesario.
+                Gestiona los miembros. Podes agregar, editar o eliminr miembros según sea necesario.
               </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -114,64 +51,9 @@ export default function MembersPage(){
       )}
 
       <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
-        {members.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <p>No hay miembros registrados</p>
-            </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-muted border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left font-semibold">Nombre</th>
-                  <th className="px-4 py-3 text-left font-semibold">Apellido</th>
-                  <th className="px-4 py-3 text-left font-semibold">Email</th>
-                  <th className="px-4 py-3 text-left font-semibold">Documento</th>
-                  <th className="px-4 py-3 text-left font-semibold">Nro Doc</th>
-                  <th className="px-4 py-3 text-left font-semibold">Fecha Nacimiento</th>
-                  <th className="px-4 py-3 text-left font-semibold">Teléfono</th>
-                  <th className="px-4 py-3 text-left font-semibold">Estado</th>
-                  <th className="px-4 py-3 text-left font-semibold">Acciones</th>
-                  </tr>
-              </thead>
-              <tbody>
-                {members.map((member)=>(
-                  <tr key={member.id} className="border-b hover:bg-muted/50">
-                    <td className="px-4 py-3">{member.name}</td>
-                    <td className="px-4 py-3">{member.surname}</td>
-                    <td className="px-4 py-3 text-blue-600">{member.email}</td>
-                    <td className="px-4 py-3">{member.docType}</td>
-                    <td className="px-4 py-3">{member.docNumber}</td>
-                    <td className="px-4 py-3">{formatDate(member.birthDate)}</td>
-                    <td className="px-4 py-3">{member.phone || '-'}</td>
-                    <td className="px-4 py-3">
-                      <Badge
-                      variant={member.status === 'ACTIVE' ? 'default' : 'secondary'}
-                      className="text-xs">
-                        {member.status === 'ACTIVE' ? 'Activo' : 'Inactivo'}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-3 space-x-2">
-                      <button
-                      onClick={()=>
-                        navigate(`/administrativo/socios/editar/${member.id}`)}
-                        className="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
-                          Editar
-                        </button>
-                      <button
-                      onClick={() => handleDelete(member.id)}
-                      className="text-xs px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">
-                        Eliminar
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              </table>
-              </div>
-        )}
-        </div>
-        </div>
+        <MembersDataTable title="Listado de Socios" subtitle="Socios registrados en el sistema" initialData={mockMembers} />
+      </div>
+    </div>
   )
 }
 
