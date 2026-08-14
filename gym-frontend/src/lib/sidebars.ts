@@ -50,7 +50,6 @@ export const ROLE_NAVIGATION: Record<
       { to: "/socio/clases", label: "Clases", icon: Calendar },
     ],
   },
-  
 }
 
 export const ADMIN_LINKS = ROLE_NAVIGATION.admin.links

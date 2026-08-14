@@ -70,7 +70,7 @@ export default function PlanesPage() {
       </div>
 
       <PlanFormDialog
-        key={planToEdit?.id ?? "new"}
+        key={`${planToEdit?.id ?? "new"}-${dialogOpen ? "open" : "closed"}`}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         planToEdit={planToEdit}

@@ -39,7 +39,7 @@ export default function PlanFormDialog({
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  function handleSubmit(e: React.FormEvent) {
+function handleSubmit(e: import("react").FormEvent<HTMLFormElement>) {
     e.preventDefault()
     onSave(
       {
