@@ -4,6 +4,7 @@ import {
   type UpdateMemberInput,
 } from '../models/Member';
 import { type Membership } from '../models/Membership';
+import { type MembershipPlan } from '../models/MembershipPlan';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
@@ -30,6 +31,14 @@ export const memberService = {
     );
     if (!response.ok) {
       throw new Error('Error al obtener membresía del miembro');
+    }
+    return response.json();
+  },
+
+  async getMembershipPlanById(planId: number): Promise<MembershipPlan> {
+    const response = await fetch(`${baseUrl}/api/membership-plans/${planId}`);
+    if (!response.ok) {
+      throw new Error('Error al obtener plan');
     }
     return response.json();
   },
