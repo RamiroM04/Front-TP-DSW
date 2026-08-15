@@ -8,8 +8,6 @@ export type Member = {
   docType: DocType;
   docNumber: string;
   birthDate: string;
-  //initials: string;
-  //avatar: string;
   email: string;
   phone: string | null;
   status: Status;

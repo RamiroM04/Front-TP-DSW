@@ -1,55 +1,57 @@
-import type { LucideIcon } from "lucide-react"
+import type { LucideIcon } from 'lucide-react';
 import {
   Calendar,
   ClipboardList,
+  CreditCard,
   Dumbbell,
   House,
   NotebookPen,
   Users,
-} from "lucide-react"
+} from 'lucide-react';
 
-export type AppRole = "admin" | "instructor" | "member"
+export type AppRole = 'admin' | 'instructor' | 'member';
 
 export type SidebarLink = {
-  to: string
-  label: string
-  icon?: LucideIcon
-}
+  to: string;
+  label: string;
+  icon?: LucideIcon;
+};
 
 export const ROLE_NAVIGATION: Record<
   AppRole,
   { title: string; links: SidebarLink[] }
 > = {
   admin: {
-    title: "Administrativo",
+    title: 'Administrativo',
     links: [
-      { to: "/administrativo/", label: "Inicio", icon: House },
-      { to: "/administrativo/clases", label: "Clases", icon: Calendar },
-      { to: "/administrativo/socios", label: "Socios", icon: Users },
+      { to: '/administrativo/', label: 'Inicio', icon: House },
+      { to: '/administrativo/clases', label: 'Clases', icon: Calendar },
+      { to: '/administrativo/socios', label: 'Socios', icon: Users },
+      { to: '/administrativo/planes', label: 'Planes', icon: CreditCard },
     ],
   },
   instructor: {
-    title: "Instructor",
+    title: 'Instructor',
     links: [
-      { to: "/instructor/", label: "Inicio", icon: House },
-      { to: "/instructor/rutinas", label: "Rutinas", icon: ClipboardList },
+      { to: '/instructor/', label: 'Inicio', icon: House },
+      { to: '/instructor/rutinas', label: 'Rutinas', icon: ClipboardList },
       {
-        to: "/instructor/ejercicios",
-        label: "Ejercicios",
+        to: '/instructor/ejercicios',
+        label: 'Ejercicios',
         icon: NotebookPen,
       },
     ],
   },
   member: {
-    title: "Socio",
+    title: 'Socio',
     links: [
-      { to: "/socio/", label: "Inicio", icon: House },
-      { to: "/socio/rutinas", label: "Rutinas", icon: Dumbbell },
-      { to: "/socio/clases", label: "Clases", icon: Calendar },
+      { to: '/socio/', label: 'Inicio', icon: House },
+      { to: '/socio/rutinas', label: 'Rutinas', icon: Dumbbell },
+      { to: '/socio/clases', label: 'Clases', icon: Calendar },
     ],
   },
-}
+};
 
-export const ADMIN_LINKS = ROLE_NAVIGATION.admin.links
-export const INSTRUCTOR_LINKS = ROLE_NAVIGATION.instructor.links
-export const MEMBER_LINKS = ROLE_NAVIGATION.member.links
+export const ADMIN_LINKS = ROLE_NAVIGATION.admin.links;
+export const INSTRUCTOR_LINKS = ROLE_NAVIGATION.instructor.links;
+export const MEMBER_LINKS = ROLE_NAVIGATION.member.links;
