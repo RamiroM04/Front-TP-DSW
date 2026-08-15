@@ -2,14 +2,11 @@ import { Input } from "@/components/ui/input"
 import { User } from "lucide-react"
 import { useState } from "react"
 import { type Member, type CreateMemberInput, type UpdateMemberInput } from "../../models/Member.ts"
-import { type Membership } from "../../models/Membership.ts"
 
 type MemberFormProps = {
   showActions?: boolean
   member?: Member
-  membership?: Membership
   onSubmit: (data: CreateMemberInput | UpdateMemberInput) => Promise<void>
-  onCancel: () => void
 }
 
 export default function MemberForm({ 
@@ -27,7 +24,7 @@ export default function MemberForm({
     docNumber: member?.docNumber || '',
     birthDate: member?.birthDate?.split('T')[0] || '',
     status: member?.status || 'ACTIVE',
-    membershipPlanId: 0, // ✅ Se pasa desde el padre
+    membershipPlanId: 0,
 
   })
 
@@ -37,7 +34,7 @@ export default function MemberForm({
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev, 
-      [name]: value,
+      [name]: name === 'membershipPlanId' ? parseInt(value) : value,
     }))
   }
 
@@ -146,7 +143,7 @@ export default function MemberForm({
             className="w-full px-3 py-2 border border-gray-300 rounded"
           >
             <option value="DNI">DNI</option>
-            <option value="PASAPORT">Pasaporte</option>
+            <option value="PASAPORTE">Pasaporte</option>
             <option value="CEDULA">Cédula</option>
           </select>
         </div>

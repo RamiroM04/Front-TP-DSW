@@ -18,6 +18,9 @@ export const membershipService = {
     membershipPlanId: number;
     startDate: string;
     endDate: string;
+    lastPaymentMethod?: string;
+    lastPaymentDate?: string;
+    lastPaymentAmount?: number;
   }): Promise<Membership> {
     const response = await fetch(`${baseUrl}/api/memberships`, {
       method: 'POST',
@@ -34,7 +37,13 @@ export const membershipService = {
 
   async update(
     membershipId: number,
-    data: { membershipPlanId: number },
+    data: {
+      membershipPlanId?: number;
+      lastPaymentMethod?: string;
+      lastPaymentDate?: string;
+      lastPaymentAmount?: number;
+      endDate?: string;
+    },
   ): Promise<Membership> {
     const response = await fetch(`${baseUrl}/api/memberships/${membershipId}`, {
       method: 'PUT',

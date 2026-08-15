@@ -8,8 +8,6 @@ export type Member = {
   docType: DocType;
   docNumber: string;
   birthDate: string;
-  //initials: string;
-  //avatar: string;
   email: string;
   phone: string | null;
   status: Status;
@@ -29,6 +27,14 @@ export type CreateMemberInput = {
   birthDate: string;
   status: Status;
   membershipPlanId: number;
+  lastPaymentMethod?:
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'TRANSFER'
+    | 'CASH'
+    | 'OTHER';
+  lastPaymentDate?: string;
+  lastPaymentAmount?: number;
 };
 export type UpdateMemberInput = Partial<
   Omit<Member, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>

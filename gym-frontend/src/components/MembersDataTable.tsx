@@ -21,6 +21,7 @@ import {
   RiDeleteBinLine,
   RiDownloadLine,
   RiExpandUpDownLine,
+  RiEyeLine,
   RiLayoutColumnLine,
   RiMoreLine,
   RiPencilLine,
@@ -57,13 +58,15 @@ import { useIsMobile } from "@/hooks/use-mobile"
 
 import type { Status } from "../models/Member"
 import type { ExtendedMember } from "../models/ExtendedMember" 
+import { useNavigate } from 'react-router-dom'
 
-type SociosDataTableProps = {
+
+type MembersDataTableProps = {
   initialData: ExtendedMember[]
   title?: string
   subtitle?: string
-  onEdit?: (id: number) => void // ✅ Recibe callback
-  onDelete?: (id: number) => void // ✅ Recibe callback
+  onEdit?: (id: number) => void 
+  onDelete?: (id: number) => void 
 }
 
 const statusVariant: Record<Status, "default" | "secondary" | "outline"> = {
@@ -106,13 +109,15 @@ function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
   )
 }
 
-export default function SociosDataTable({
+export default function MembersDataTable({
   initialData,
   title,
   subtitle,
-  onEdit, // ✅ CAMBIO: Recibe onEdit
-  onDelete, // ✅ CAMBIO: Recibe onDelete
-}: SociosDataTableProps) {
+  onEdit, 
+  onDelete, 
+}: MembersDataTableProps) {
+  const navigate = useNavigate()
+
   const isMobile = useIsMobile()
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "createdAt", desc: true },
@@ -129,7 +134,7 @@ export default function SociosDataTable({
     setData(initialData)
   }, [initialData])
 
-  // ✅ CAMBIO: Las columnas DENTRO del componente para acceder a onEdit y onDelete
+
   const columns: ColumnDef<ExtendedMember>[] = [
     {
       id: "select",
@@ -259,7 +264,7 @@ export default function SociosDataTable({
         </span>
       ),
     },
-    // ✅ CAMBIO: Acciones con onClick directo a onEdit y onDelete
+
     {
       id: "actions",
       enableSorting: false,
@@ -278,6 +283,11 @@ export default function SociosDataTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem onClick={() => navigate(`/administrativo/socios/${row.original.id}`)}
+              >
+                <RiEyeLine aria-hidden= "true"/>
+                Ver perfil
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onEdit?.(row.original.id)}>
                 <RiPencilLine aria-hidden="true" />
                 Editar

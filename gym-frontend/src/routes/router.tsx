@@ -8,6 +8,8 @@ import NewMemberPage from '../pages/admin/NewMemberPage'
 import RutinasPage from '../pages/instructor/RutinasPage'
 import EjerciciosPage from '../pages/instructor/EjerciciosPage'
 import MemberClassesPage from '../pages/member/ClassesPage'
+import EditMemberPage from '@/pages/admin/EditMemberPage'
+import MemberDetailsPage from '@/pages/admin/MemberDetailsPage'
 
 export const router = createBrowserRouter([
   {
@@ -21,7 +23,8 @@ export const router = createBrowserRouter([
       { path: 'clases', element: <AdminClassesPage /> },
       { path: 'socios', element: <MembersPage /> },
       { path: 'socios/nuevo', element: <NewMemberPage /> },
-      { path: 'socios/editar/:id', element:<NewMemberPage/> },
+      { path: 'socios/editar/:id', element: <EditMemberPage /> },
+      { path: 'socios/:id', element: <MemberDetailsPage /> },
     ],
   },
   {
