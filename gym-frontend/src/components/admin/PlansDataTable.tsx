@@ -22,12 +22,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import type { Plan } from "@/models/Plan"
+import type { MembershipPlan } from "@/models/MembershipPlan"
 
 type PlansDataTableProps = {
-  plans: Plan[]
-  onEdit: (plan: Plan) => void
-  onDelete: (id: string) => void
+  plans: MembershipPlan[]
+  onEdit: (plan: MembershipPlan) => void
+  onDelete: (id: number) => void
   title?: string
   subtitle?: string
 }
@@ -41,7 +41,7 @@ function formatPrice(value: number) {
 
 export default function PlansDataTable({ plans, onEdit, onDelete, title, subtitle }: PlansDataTableProps) {
   // Elimina un plan y avisa con un toast.
-  function handleDelete(plan: Plan) {
+  function handleDelete(plan: MembershipPlan) {
     onDelete(plan.id)
     toast("Plan eliminado", { description: `${plan.name} fue eliminado.` })
   }

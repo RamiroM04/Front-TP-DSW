@@ -14,6 +14,4 @@ export type CreateMembershipPlanInput = Omit<
   'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
 >;
 
-export type UpdateMembershipPlanInput = Partial<
-  Omit<MembershipPlan, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
->;
+export type UpdateMembershipPlanInput = Partial<CreateMembershipPlanInput>;

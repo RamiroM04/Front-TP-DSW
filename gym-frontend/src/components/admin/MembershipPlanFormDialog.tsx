@@ -11,22 +11,22 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import type { Plan } from "@/models/Plan"
+import type { CreateMembershipPlanInput, MembershipPlan } from "@/models/MembershipPlan"
 
-type PlanFormDialogProps = {
+type MembershipPlanFormDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  planToEdit?: Plan | null
-  onSave: (plan: Omit<Plan, "id">, id?: string) => void
+  planToEdit?: MembershipPlan | null
+  onSave: (plan: CreateMembershipPlanInput, id?: number) => void
 }
 
 // Formulario de alta/edición de un plan, dentro de un modal.
-export default function PlanFormDialog({
+export default function MembershipPlanFormDialog({
   open,
   onOpenChange,
   planToEdit,
   onSave,
-}: PlanFormDialogProps) {
+}: MembershipPlanFormDialogProps) {
   const [form, setForm] = useState({
     name: planToEdit?.name ?? "",
     price: planToEdit ? String(planToEdit.price) : "",
@@ -39,14 +39,15 @@ export default function PlanFormDialog({
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-function handleSubmit(e: import("react").FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault()
+    const { name, price, durationDays, description } = form
     onSave(
       {
-        name: form.name,
-        price: Number(form.price),
-        durationDays: Number(form.durationDays),
-        description: form.description,
+        name,
+        price: Number(price),
+        durationDays: Number(durationDays),
+        description,
       },
       planToEdit?.id
     )
