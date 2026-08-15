@@ -31,18 +31,14 @@ type ClassScheduleFormDialogProps = {
   onSave: (data: Omit<ClassSchedule, "id">, id?: string) => void
 }
 
-// Formulario de alta/edición de una clase, dentro de un modal.
 export default function ClassScheduleFormDialog({
   open,
   onOpenChange,
   classToEdit,
   onSave,
 }: ClassScheduleFormDialogProps) {
-  // Lista de instructores de prueba, para poblar el selector (sin fetch, sin backend).
   const instructors = mockInstructors
 
-  // Se inicializa una sola vez, leyendo classToEdit directo (sin useEffect).
-  // El "reseteo" al cambiar de clase lo maneja la prop key desde ClassesPage.
   const [form, setForm] = useState({
     name: classToEdit?.name ?? "",
     description: classToEdit?.description ?? "",
@@ -54,12 +50,10 @@ export default function ClassScheduleFormDialog({
     maxCapacity: classToEdit ? String(classToEdit.maxCapacity) : "",
   })
 
-  // Actualiza un campo puntual del formulario sin pisar los demás.
   function updateField<K extends keyof typeof form>(field: K, value: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  // Junta los valores del formulario y se los pasa al padre.
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     onSave(

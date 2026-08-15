@@ -1,6 +1,5 @@
 import type { ClassSchedule } from "../models/ClassSchedule"
 
-// Datos de prueba en memoria. Los instructorId coinciden con mockInstructors.ts.
 export const mockClasses: ClassSchedule[] = [
   {
     id: "class-hiit",

@@ -49,7 +49,7 @@ export default function ClassesDataTable({ classes, instructors, onEdit, onDelet
             <TableHead className="h-9 text-center">Día</TableHead>
             <TableHead className="h-9 text-center">Horario</TableHead>
             <TableHead className="h-9 text-center">Duración</TableHead>
-            <TableHead className="h-9 text-center">Cupo</TableHead>
+            <TableHead className="h-9 text-center">Cupos</TableHead>
             <TableHead className="h-9 text-center">
               <span className="sr-only">Acciones</span>
             </TableHead>
