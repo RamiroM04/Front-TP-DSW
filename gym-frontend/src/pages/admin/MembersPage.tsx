@@ -7,6 +7,7 @@ import SociosDataTable from '@/components/SociosDataTable'
 import { toast } from 'sonner'
 import { type ExtendedMember } from '../../models/ExtendedMember'
 import { useNavigate } from 'react-router-dom'
+import { membershipPlanService } from '@/services/membershipPlanService'
 export default function MembersPage(){
   const navigate = useNavigate()
   const [members, setMembers] = useState<ExtendedMember[]>([])
@@ -23,7 +24,7 @@ export default function MembersPage(){
           data.map(async (member) => {
             try{
               const membership = await memberService.getMembershipByMemberId(member.id);
-              const plan = await memberService.getMembershipPlanById(membership.membershipPlanId);
+              const plan = await membershipPlanService.getMembershipPlanById(membership.membershipPlanId);
               return{
                 ...member,
                 plan: plan.name,
@@ -63,7 +64,7 @@ export default function MembersPage(){
         updated.map(async (member) => {
           try{
             const membership = await memberService.getMembershipByMemberId(member.id);
-            const plan = await memberService.getMembershipPlanById(membership.membershipPlanId);
+            const plan = await membershipPlanService.getMembershipPlanById(membership.membershipPlanId);
             return{
               ...member,
               plan: plan.name,
