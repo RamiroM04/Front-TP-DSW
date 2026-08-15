@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { type ExtendedMember } from '../../models/ExtendedMember'
 import { useNavigate } from 'react-router-dom'
 import { membershipPlanService } from '@/services/membershipPlanService'
+import { membershipService } from '@/services/membershipService'
 export default function MembersPage(){
   const navigate = useNavigate()
   const [members, setMembers] = useState<ExtendedMember[]>([])
@@ -23,7 +24,7 @@ export default function MembersPage(){
         const extendedMembers: ExtendedMember[] = await Promise.all(
           data.map(async (member) => {
             try{
-              const membership = await memberService.getMembershipByMemberId(member.id);
+              const membership = await membershipService.getMembershipByMemberId(member.id);
               const plan = await membershipPlanService.getMembershipPlanById(membership.membershipPlanId);
               return{
                 ...member,
@@ -63,7 +64,7 @@ export default function MembersPage(){
       const extendedMembers: ExtendedMember[] = await Promise.all(
         updated.map(async (member) => {
           try{
-            const membership = await memberService.getMembershipByMemberId(member.id);
+            const membership = await membershipService.getMembershipByMemberId(member.id);
             const plan = await membershipPlanService.getMembershipPlanById(membership.membershipPlanId);
             return{
               ...member,

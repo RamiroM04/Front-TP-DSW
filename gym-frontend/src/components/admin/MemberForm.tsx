@@ -1,96 +1,82 @@
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { User } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { type Member, type CreateMemberInput, type UpdateMemberInput } from "../../models/Member.ts"
-import { type MembershipPlan } from "../../models/MembershipPlan.ts"
 import { type Membership } from "../../models/Membership.ts"
+
 type MemberFormProps = {
   showActions?: boolean
-  member? : Member
+  member?: Member
   membership?: Membership
   onSubmit: (data: CreateMemberInput | UpdateMemberInput) => Promise<void>
   onCancel: () => void
 }
 
 export default function MemberForm({ 
-  showActions = true, member, membership,onSubmit, onCancel}: MemberFormProps) {
-    const [plans, setPlans] = useState<MembershipPlan[]>([])
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
+  member, 
+  onSubmit, 
+}: MemberFormProps) {
+  const [error, setError] = useState<string | null>(null)
 
+  const [formData, setFormData] = useState<CreateMemberInput>({
+    name: member?.name || '',
+    surname: member?.surname || '',
+    email: member?.email || '',
+    phone: member?.phone || '',
+    docType: member?.docType || 'DNI',
+    docNumber: member?.docNumber || '',
+    birthDate: member?.birthDate?.split('T')[0] || '',
+    status: member?.status || 'ACTIVE',
+    membershipPlanId: 0, // ✅ Se pasa desde el padre
 
-    const [formData, setFormData] = useState<CreateMemberInput>({
-      name: member?.name || '',
-      surname: member?.surname || '',
-      email: member?.email || '',
-      phone: member?.phone || '',
-      docType: member?.docType || 'DNI',
-      docNumber: member?.docNumber || '',
-      birthDate: member?.birthDate?.split('T')[0] || '',
-      status: member?.status || 'ACTIVE',
-      membershipPlanId: member ? (membership?.membershipPlanId || 0) : 0,
-    })
+  })
 
-    useEffect(() => {
-      const fetchPlans = async() => {
-        try{
-          const response = await fetch('/api/membership-plans')
-          const data = await response.json()
-          setPlans(data)
-        }catch(err){
-          console.error('Error fetching plans:', err)
-        }
-      }
-      fetchPlans()
-    }, [])
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev, 
+      [name]: value,
+    }))
+  }
 
-    const handleChange = (
-      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    ) => {
-      const {name, value} = e.target
-      setFormData((prev) => ({
-        ...prev, 
-        [name]: name === 'membershipPlanId' ? parseInt(value) : value,
-      }))
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+
+    try {
+      const dataToSubmit: CreateMemberInput | UpdateMemberInput = member
+        ? {
+            name: formData.name, 
+            surname: formData.surname,
+            email: formData.email, 
+            phone: formData.phone, 
+            docType: formData.docType, 
+            docNumber: formData.docNumber,
+            birthDate: formData.birthDate, 
+            status: formData.status
+          }
+        : formData
+      
+      await onSubmit(dataToSubmit)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido')
     }
+  }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault()
-      setLoading(true)
-      setError(null)
-
-      try{
-        const dataToSubmit = member?{
-          name: formData.name, 
-          surname: formData.surname,
-          email: formData.email, 
-          phone: formData.phone, 
-          docType: formData.docType, 
-          docNumber: formData.docNumber,
-          birthDate: formData.birthDate, 
-          membershipPlanId: formData.membershipPlanId,
-          status: formData.status} :formData
-        await onSubmit(dataToSubmit)
-      }catch(err){
-        setError(err instanceof Error ? err.message: 'Error desconocido')
-      }finally{
-        setLoading(false)
-      }
-    }
-
-    return (
-      <form onSubmit= {handleSubmit} className= "rounded-xl border bg-background px-4 py-2 items-baseline sm:px-6 sm:py-6">
-        <h3 className= "mb-2 flex items-center gap-2 text-lg font-semibold">
-          <User className = "size-5" aria-hidden= "true" />
-          {member ? 'Editar socio' : 'Informacion del socio'}
-            </h3>
-            
-            {error &&(
-              <div className = "mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-                {error}
-              </div>
-            )}
+  return (
+    <form id="member-form" onSubmit={handleSubmit} className="rounded-xl border bg-background px-4 py-2 items-baseline sm:px-6 sm:py-6">
+      <h3 className="mb-2 flex items-center gap-2 text-lg font-semibold">
+        <User className="size-5" aria-hidden="true" />
+        {member ? 'Editar socio' : 'Información del socio'}
+      </h3>
+      
+      {error && (
+        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
 
       <div className="grid gap-2 sm:grid-cols-2">
         <div className="space-y-2">
@@ -121,7 +107,7 @@ export default function MemberForm({
           />
         </div>
 
-                <div className="space-y-2">
+        <div className="space-y-2">
           <label htmlFor="birthDate" className="text-sm font-medium">
             Fecha de nacimiento
           </label>
@@ -134,7 +120,7 @@ export default function MemberForm({
           />
         </div>
 
-                <div className="space-y-2">
+        <div className="space-y-2">
           <label htmlFor="docNumber" className="text-sm font-medium">
             Nº de documento
           </label>
@@ -148,7 +134,7 @@ export default function MemberForm({
           />
         </div>
 
-                <div className="space-y-2">
+        <div className="space-y-2">
           <label htmlFor="docType" className="text-sm font-medium">
             Tipo de documento
           </label>
@@ -165,7 +151,7 @@ export default function MemberForm({
           </select>
         </div>
 
-                <div className="space-y-2">
+        <div className="space-y-2">
           <label htmlFor="email" className="text-sm font-medium">
             Email
           </label>
@@ -192,71 +178,8 @@ export default function MemberForm({
             onChange={handleChange}
           />
         </div>
-{!member ? (
-  <div className="space-y-2">
-    <label htmlFor="membershipPlanId" className="text-sm font-medium">
-      Plan
-    </label>
-    <select
-      id="membershipPlanId"
-      name="membershipPlanId"
-      value={formData.membershipPlanId}
-      onChange={handleChange}
-      className="w-full px-3 py-2 border border-gray-300 rounded"
-      required
-    >
-      <option value="">Seleccione un plan</option>
-      {plans.map((plan) => (
-        <option key={plan.id} value={plan.id}>
-          {plan.name} - ${plan.price}
-        </option>
-      ))}
-    </select>
-  </div>
-) : (
-  <div className="space-y-2">
-    <label htmlFor="membershipPlanId" className="text-sm font-medium">
-      Plan
-    </label>
-    <select
-      id="membershipPlanId"
-      name="membershipPlanId"
-      value={formData.membershipPlanId}
-      onChange={handleChange}
-      className="w-full px-3 py-2 border border-gray-300 rounded"
-    >
-      {plans.map((plan) => (
-        <option key={plan.id} value={plan.id}>
-          {plan.name} - ${plan.price}
-        </option>
-      ))}
-    </select>
-  </div>
-)}
 
-
-        {/* <div className="space-y-2">
-          <label htmlFor="membershiPlanId" className= "text-sm font-medium">
-            Plan*
-          </label>
-          <select
-          id="membershipPlanId"
-          name="membershipPlanId"
-          value={formData.membershipPlanId}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded"
-          required
-          >
-            <option value="">Seleccione un plan</option>
-            {plans.map((plan)=> (
-              <option key = {plan.id} value={plan.id}>
-                {plan.name} - ${plan.price}
-              </option>
-            ))}
-            </select>
-        </div> */}
-
-                <div className="space-y-2">
+        <div className="space-y-2">
           <label htmlFor="status" className="text-sm font-medium">
             Estado
           </label>
@@ -267,71 +190,12 @@ export default function MemberForm({
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded"
           >
-            <option value="Activo">Activo</option>
-            <option value="Inactivo">Inactivo</option>
+            <option value="ACTIVE">Activo</option>
+            <option value="INACTIVE">Inactivo</option>
           </select>
         </div>
       </div>
 
-            {showActions && (
-        <div className="flex justify-end gap-2 py-4">
-          <Button variant="outline" type="button" onClick={onCancel}>
-            Cancelar
-          </Button>
-          <Button type="submit" disabled={loading}>
-            {loading ? 'Guardando...' : 'Guardar'}
-          </Button>
-        </div>
-      )}
     </form>
   )
 }
-    {/* 
-
-        </div>
-
-
-
-
-        <div className="space-y-2">
-          <label htmlFor="fechaNacimiento" className="text-sm font-medium">
-            Fecha de nacimiento
-          </label>
-          <Input id="fechaNacimiento" name="fechaNacimiento" type="date" />
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="nro_doc" className="text-sm font-medium">
-            Nº de documento
-          </label>
-          <Input id="nro_doc" name="nro_doc" placeholder="12345678" />
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="email" className="text-sm font-medium">
-            Email
-          </label>
-          <Input id="email" name="email" type="email" placeholder="correo@ejemplo.com" />
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="telefono" className="text-sm font-medium">
-            Teléfono
-          </label>
-          <Input id="telefono" name="telefono" placeholder="+54 9 11 1234 5678" />
-        </div>
-      </div>
-
-      {showActions && (
-        <div className="flex justify-end gap-2 py-4">
-          <Button variant="outline" type="button">
-            Cancelar
-          </Button>
-          <Button type="submit">
-            Guardar
-          </Button>
-        </div>
-      )}
-    </form>
-  ) */}
-

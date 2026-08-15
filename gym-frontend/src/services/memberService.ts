@@ -3,7 +3,6 @@ import {
   type CreateMemberInput,
   type UpdateMemberInput,
 } from '../models/Member';
-import { type Membership } from '../models/Membership';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
@@ -24,16 +23,6 @@ export const memberService = {
     return response.json();
   },
 
-  async getMembershipByMemberId(memberId: number) {
-    const response = await fetch(
-      `${baseUrl}/api/memberships/member/${memberId}`,
-    );
-    if (!response.ok) {
-      throw new Error('Error al obtener membresía del miembro');
-    }
-    return response.json();
-  },
-
   async create(data: CreateMemberInput): Promise<Member> {
     const response = await fetch(`${baseUrl}/api/members`, {
       method: 'POST',
@@ -45,23 +34,6 @@ export const memberService = {
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Error al crear miembro');
-    }
-    return response.json();
-  },
-
-  async updateMembership(
-    membershipId: number,
-    data: { membershipPlanId: number },
-  ): Promise<Membership> {
-    const response = await fetch(`${baseUrl}/api/memberships/${membershipId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-      throw new Error('Error al actualizar la membresía');
     }
     return response.json();
   },
