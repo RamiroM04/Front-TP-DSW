@@ -27,7 +27,7 @@ export default function MemberForm({
     docNumber: member?.docNumber || '',
     birthDate: member?.birthDate?.split('T')[0] || '',
     status: member?.status || 'ACTIVE',
-    membershipPlanId: 0, 
+    membershipPlanId: 0, // ✅ Se pasa desde el padre
 
   })
 

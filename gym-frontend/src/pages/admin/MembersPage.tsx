@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { RiAddLine } from '@remixicon/react'
 import { memberService } from '@/services/memberService'
-import MembersDataTable from '@/components/MembersDataTable'
+import SociosDataTable from '@/components/SociosDataTable'
 import { toast } from 'sonner'
 import { type ExtendedMember } from '../../models/ExtendedMember'
 import { useNavigate } from 'react-router-dom'
@@ -148,7 +148,7 @@ export default function MembersPage(){
       )}
 
       <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
-        <MembersDataTable
+        <SociosDataTable
         initialData={members}
         title="Listado de Socios"
         subtitle="Socios registrados en el sistema"

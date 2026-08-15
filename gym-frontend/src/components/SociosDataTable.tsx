@@ -110,8 +110,8 @@ export default function SociosDataTable({
   initialData,
   title,
   subtitle,
-  onEdit, 
-  onDelete, 
+  onEdit, // ✅ CAMBIO: Recibe onEdit
+  onDelete, // ✅ CAMBIO: Recibe onDelete
 }: SociosDataTableProps) {
   const isMobile = useIsMobile()
   const [sorting, setSorting] = React.useState<SortingState>([
@@ -129,6 +129,7 @@ export default function SociosDataTable({
     setData(initialData)
   }, [initialData])
 
+  // ✅ CAMBIO: Las columnas DENTRO del componente para acceder a onEdit y onDelete
   const columns: ColumnDef<ExtendedMember>[] = [
     {
       id: "select",
@@ -258,7 +259,7 @@ export default function SociosDataTable({
         </span>
       ),
     },
-
+    // ✅ CAMBIO: Acciones con onClick directo a onEdit y onDelete
     {
       id: "actions",
       enableSorting: false,
