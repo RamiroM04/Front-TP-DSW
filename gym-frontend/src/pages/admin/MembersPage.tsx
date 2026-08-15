@@ -105,7 +105,7 @@ export default function MembersPage(){
 
   return(
     <div className="space-y-4">
-      <section className="rounded-xl border bg-backgroun px-4 py-2 sm:px-6 sm:py-6">
+      <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div className="space-y-3">
             <div className="space-y-1.5">
@@ -150,7 +150,7 @@ export default function MembersPage(){
         initialData={members}
         title="Listado de Socios"
         subtitle="Socios registrados en el sistema"
-        onEdit={(id) => window.location.href=`/administrativo/socios/editar/${id}`}
+      onEdit={(id) => navigate(`/administrativo/socios/editar/${id}`)}
         onDelete={handleDelete}
         />
         </div>
