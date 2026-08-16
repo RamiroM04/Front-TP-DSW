@@ -60,6 +60,8 @@ export default function ClassesPage() {
           instructors={instructors}
           onEdit={handleEditar}
           onDelete={handleEliminar}
+          title="Listado de Clases"
+          subtitle="Clases registradas en el sistema"
         />
       </div>
     </div>
