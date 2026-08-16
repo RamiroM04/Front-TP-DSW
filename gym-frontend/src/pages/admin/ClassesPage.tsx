@@ -1,6 +1,6 @@
 import { useState } from "react"
+import { useNavigate, Link } from "react-router-dom"
 import ClassesDataTable from "@/components/ClassesDataTable"
-import ClassScheduleFormDialog from "@/components/admin/ClassScheduleFormDialog"
 import { mockClasses } from "@/services/mockClasses"
 import { mockInstructors } from "@/services/mockInstructors"
 import { Button } from "@/components/ui/button"
@@ -9,36 +9,22 @@ import { RiAddLine } from "@remixicon/react"
 import type { ClassSchedule } from "@/models/ClassSchedule"
 
 export default function ClassesPage() {
+  const navigate = useNavigate()
+  // Se re-lee mockClasses cada vez que este componente se monta —
+  // por eso, al volver de crear/editar, ya trae los cambios.
   const [classes, setClasses] = useState<ClassSchedule[]>(mockClasses)
   const instructors = mockInstructors
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [classToEdit, setClassToEdit] = useState<ClassSchedule | null>(null)
 
-  // Abre el diálogo en modo "crear" (sin clase precargada).
-  function handleNueva() {
-    setClassToEdit(null)
-    setDialogOpen(true)
-  }
-
-  // Abre el diálogo en modo "editar", con la clase elegida precargada.
+  // Navega a la pantalla de edición, llevándose los datos de la clase por "state".
   function handleEditar(item: ClassSchedule) {
-    setClassToEdit(item)
-    setDialogOpen(true)
+    navigate(`/administrativo/clases/${item.id}/editar`, { state: item })
   }
 
-  // Elimina una clase del estado en memoria.
+  // Elimina una clase (del estado local Y de mockClasses, para mantenerlos sincronizados).
   function handleEliminar(id: string) {
+    const index = mockClasses.findIndex((c) => c.id === id)
+    if (index !== -1) mockClasses.splice(index, 1)
     setClasses((prev) => prev.filter((c) => c.id !== id))
-  }
-
-  // Crea una clase nueva o actualiza una existente, según si vino un id.
-  function handleGuardar(datos: Omit<ClassSchedule, "id">, id?: string) {
-    if (id) {
-      setClasses((prev) => prev.map((c) => (c.id === id ? { ...c, ...datos } : c)))
-    } else {
-      const nueva: ClassSchedule = { ...datos, id: crypto.randomUUID() }
-      setClasses((prev) => [...prev, nueva])
-    }
   }
 
   return (
@@ -59,9 +45,11 @@ export default function ClassesPage() {
             </div>
           </div>
 
-          <Button size="default" className="w-full md:w-auto md:px-5" onClick={handleNueva}>
-            <RiAddLine className="mr-1 size-3.5" aria-hidden="true" />
-            Nueva Clase
+          <Button size="default" className="w-full md:w-auto md:px-5" asChild>
+            <Link to="/administrativo/clases/nueva">
+              <RiAddLine className="mr-1 size-3.5" aria-hidden="true" />
+              Nueva Clase
+            </Link>
           </Button>
         </div>
       </section>
@@ -74,14 +62,6 @@ export default function ClassesPage() {
           onDelete={handleEliminar}
         />
       </div>
-
-      <ClassScheduleFormDialog
-        key={classToEdit?.id ?? "new"}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        classToEdit={classToEdit}
-        onSave={handleGuardar}
-      />
     </div>
   )
 }

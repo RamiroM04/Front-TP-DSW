@@ -17,20 +17,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { classService } from "@/services/classService"
+import { mockClasses } from "@/services/mockClasses"
 import { mockInstructors } from "@/services/mockInstructors"
 import type { ClassCategory, ClassSchedule, DayOfWeek } from "@/models/ClassSchedule"
 
 const categories: ClassCategory[] = ["HIIT", "Strength", "Zen", "Cardio"]
 const days: DayOfWeek[] = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
 
+// Formulario de alta/edición de una clase, ahora como página completa.
 export default function ClassScheduleFormPage() {
   const navigate = useNavigate()
   const { id } = useParams<{ id?: string }>()
   const location = useLocation()
 
-  // Si venimos a editar, la clase viaja en el "state" de la navegación
-  // (así vemos los cambios más recientes, no una copia vieja).
+  // Si venimos a editar, la clase viaja en el "state" de la navegación.
   const classToEdit = (location.state as ClassSchedule | undefined) ?? null
   const isEditing = Boolean(id)
 
@@ -47,17 +47,14 @@ export default function ClassScheduleFormPage() {
     maxCapacity: classToEdit ? String(classToEdit.maxCapacity) : "",
   })
 
-  const [enviando, setEnviando] = useState(false)
-
   // Actualiza un campo puntual del formulario sin pisar los demás.
   function updateField<K extends keyof typeof form>(field: K, value: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  // Guarda a través del service (crear o editar según corresponda).
-  async function handleSubmit(e: React.FormEvent) {
+  // Guarda modificando mockClasses directo — mismo array que usa ClassesPage.
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setEnviando(true)
 
     const datos: Omit<ClassSchedule, "id"> = {
       name: form.name,
@@ -70,16 +67,14 @@ export default function ClassScheduleFormPage() {
       maxCapacity: Number(form.maxCapacity),
     }
 
-    try {
-      if (isEditing && id) {
-        await classService.updateClass(id, datos)
-      } else {
-        await classService.createClass(datos)
-      }
-      navigate("/administrativo/clases")
-    } finally {
-      setEnviando(false)
+    if (isEditing && id) {
+      const index = mockClasses.findIndex((c) => c.id === id)
+      if (index !== -1) mockClasses[index] = { ...mockClasses[index], ...datos }
+    } else {
+      mockClasses.push({ ...datos, id: crypto.randomUUID() })
     }
+
+    navigate("/administrativo/clases")
   }
 
   return (
@@ -212,9 +207,7 @@ export default function ClassScheduleFormPage() {
               <Button type="button" variant="outline" onClick={() => navigate("/administrativo/clases")}>
                 Cancelar
               </Button>
-              <Button type="submit" disabled={enviando}>
-                {enviando ? "Guardando..." : isEditing ? "Guardar cambios" : "Crear clase"}
-              </Button>
+              <Button type="submit">{isEditing ? "Guardar cambios" : "Crear clase"}</Button>
             </div>
           </form>
         </CardContent>
