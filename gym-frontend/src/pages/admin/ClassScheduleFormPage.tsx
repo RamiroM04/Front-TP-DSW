@@ -81,7 +81,7 @@ export default function ClassScheduleFormPage() {
     <div className="space-y-4">
       <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          {isEditing ? "Editar Clase" : "Alta de Nueva Clase"}
+          {isEditing ? "Editar Clase" : "Crear una Nueva Clase"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground sm:text-base">
           {isEditing
