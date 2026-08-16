@@ -41,7 +41,7 @@ export default function ClassesDataTable({
   title,
   subtitle,
 }: ClassesDataTableProps) {
-  // Elimina una clase y avisa con un toast.
+  // Elimina una clase
   function handleDelete(item: ClassSchedule) {
     onDelete(item.id)
     toast("Clase eliminada", { description: `${item.name} fue eliminada.` })

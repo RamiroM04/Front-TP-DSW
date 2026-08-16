@@ -10,8 +10,7 @@ import type { ClassSchedule } from "@/models/ClassSchedule"
 
 export default function ClassesPage() {
   const navigate = useNavigate()
-  // Se re-lee mockClasses cada vez que este componente se monta —
-  // por eso, al volver de crear/editar, ya trae los cambios.
+  // Se relee mockClasses cada vez que este componente se monta,por eso, al volver de crear/editar, ya trae los cambios.
   const [classes, setClasses] = useState<ClassSchedule[]>(mockClasses)
   const instructors = mockInstructors
 
