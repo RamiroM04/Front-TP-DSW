@@ -9,7 +9,6 @@ export type DayOfWeek =
   | "Sábado"
   | "Domingo"
 
-// Forma de una plantilla de clase recurrente (ClassSchedule) en el frontend.
 export interface ClassSchedule {
   id: string
   name: string
