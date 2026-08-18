@@ -1,30 +1,128 @@
-import MembersDataTable from "@/components/MembersDataTable"
-import { mockMembers } from "@/services/mockMembers"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { RiAddLine } from "@remixicon/react"
-import { Link } from "react-router-dom"
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { RiAddLine } from '@remixicon/react'
+import { memberService } from '@/services/memberService'
+import MembersDataTable from '@/components/MembersDataTable'
+import { toast } from 'sonner'
+import { type ExtendedMember } from '../../models/ExtendedMember'
+import { useNavigate } from 'react-router-dom'
+import { membershipPlanService } from '@/services/membershipPlanService'
+import { membershipService } from '@/services/membershipService'
+export default function MembersPage(){
+  const navigate = useNavigate()
+  const [members, setMembers] = useState<ExtendedMember[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-export default function MembersPage() {
-  return (
+  useEffect(() => {
+    const loadMembers = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const data = await memberService.getAllMembers()
+        const extendedMembers: ExtendedMember[] = await Promise.all(
+          data.map(async (member) => {
+            try{
+              const membership = await membershipService.getMembershipByMemberId(member.id);
+              const plan = await membershipPlanService.getMembershipPlanById(membership.membershipPlanId);
+              return{
+                ...member,
+                plan: plan.name,
+                nextExpiration: membership.endDate,
+              }
+            }catch(err){
+              console.error(`Error al obtener datos del miembro ${member.id}: `, err)
+              return{
+                ...member,
+                plan: 'Plan no disponible',
+                nextExpiration: member.createdAt,
+              }
+            }
+          })
+        )
+
+        setMembers(extendedMembers)
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
+        setError(errorMessage)
+        toast.error(errorMessage)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadMembers()
+},[])
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('¿Estás seguro de que quieres eliminar este miembro?')) return
+    try {
+      await memberService.delete(id)
+      toast.success('Miembro eliminado exitosamente')
+      
+      const updated= await memberService.getAllMembers()
+      const extendedMembers: ExtendedMember[] = await Promise.all(
+        updated.map(async (member) => {
+          try{
+            const membership = await membershipService.getMembershipByMemberId(member.id);
+            const plan = await membershipPlanService.getMembershipPlanById(membership.membershipPlanId);
+            return{
+              ...member,
+              plan: plan.name,
+              nextExpiration: membership.endDate,
+            }
+          } catch{
+            return{
+              ...member,
+              plan: 'Plan no disponible',
+              nextExpiration: member.createdAt,
+            }
+          }
+        })
+      )
+      setMembers(extendedMembers)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al eliminar'
+      toast.error(errorMessage)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            Directorio de Miembros
+          </h1>
+        </section>
+        <div className="rounded-xl border bg-background px-4 py-6 sm:px-6 text-center">
+          <p>Cargando miembros...</p>
+        </div>
+      </div>
+    )
+  }
+  const activeCount = members.filter((m) => m.status === 'ACTIVE').length
+  const inactiveCount = members.filter((m) => m.status === 'INACTIVE').length
+
+  return(
     <div className="space-y-4">
       <section className="rounded-xl border bg-backgroun px-4 py-2 sm:px-6 sm:py-6">
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div className="space-y-3">
             <div className="space-y-1.5">
               <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                Directorio de Miembros
+                Directorio de socios
               </h1>
               <p className="max-w-2xl text-sm sm:text-base">
-                Gestiona los miembros. Podes agregar, editar o eliminr miembros según sea necesario.
+                Gestiona los socios. Podes agregar, editar o eliminar socios según sea necesario.
               </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="px-3 py-1 text-xs sm:text-sm">
-              Miembros activos: {activeCount}
+              Socios activos: {activeCount}
             </Badge>
             <Badge variant="secondary" className="px-3 py-1 text-xs sm:text-sm">
-              Miembros inactivos: {inactiveCount}
+              Socios inactivos: {inactiveCount}
             </Badge>
             <Badge variant="secondary" className="px-3 py-1 text-xs sm:text-sm">
               Total: {members.length}
@@ -34,12 +132,10 @@ export default function MembersPage() {
 
         <Button
         size="default"
-        className="w-full md:w-auto md:px-5"
-        onClick={()=>
-          navigate('/administrativo/socios/nuevo')}
-        >
+        className="w-full md:w-auto md:px-5" 
+        onClick={() => navigate('/administrativo/socios/nuevo')}>
           <RiAddLine className="mr-1 size-3.5" aria-hidden="true"/>
-          Nuevo Miembro
+          Nuevo Socio
         </Button>
         </div>
       </section>
@@ -51,9 +147,15 @@ export default function MembersPage() {
       )}
 
       <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
-        <MembersDataTable title="Listado de Socios" subtitle="Socios registrados en el sistema" initialData={mockMembers} />
-      </div>
-    </div>
+        <MembersDataTable
+        initialData={members}
+        title="Listado de Socios"
+        subtitle="Socios registrados en el sistema"
+      onEdit={(id) => navigate(`/administrativo/socios/editar/${id}`)}
+        onDelete={handleDelete}
+        />
+        </div>
+        </div>
   )
 }
 
