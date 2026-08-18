@@ -1,26 +1,23 @@
 import { createBrowserRouter } from 'react-router-dom'
 import NotFoundPage from '../pages/NotFoundPage'
-import LoginPage from '../pages/LoginPage'
 import RoleLayout from '../layouts/RoleLayout'
 import TemporalLanding from '../pages/TemporaryLandingPage'
 import AdminClassesPage from '../pages/admin/ClassesPage'
 import MembersPage from '../pages/admin/MembersPage'
 import NewMemberPage from '../pages/admin/NewMemberPage'
+import EditMemberPage from '@/pages/admin/EditMemberPage'
+import MemberDetailsPage from '@/pages/admin/MemberDetailsPage'
+import PlanesPage from '../pages/admin/PlanesPage'
+import ClassScheduleFormPage from '../pages/admin/ClassScheduleFormPage' 
 import RutinasPage from '../pages/instructor/RutinasPage'
 import EjerciciosPage from '../pages/instructor/EjerciciosPage'
 import MemberClassesPage from '../pages/member/ClassesPage'
-import PlanesPage from '../pages/admin/PlanesPage'
-import ClassScheduleFormPage from '../pages/admin/ClassScheduleFormPage' 
 
 //TODO: Implementar lazy loading para las páginas de cada rol, para que no se carguen todas al inicio y solo se carguen cuando el usuario accede a la ruta correspondiente.
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <LoginPage />,
-  },
-  {
-    path: '/project-overview',
     element: <TemporalLanding />,
   },
   {
@@ -32,7 +29,8 @@ export const router = createBrowserRouter([
       { path: 'clases/:id/editar', element: <ClassScheduleFormPage /> }, 
       { path: 'socios', element: <MembersPage /> },
       { path: 'socios/nuevo', element: <NewMemberPage /> },
-      { path: 'planes', element: <PlanesPage /> },
+      { path: 'socios/editar/:id', element: <EditMemberPage /> },
+      { path: 'socios/:id', element: <MemberDetailsPage /> },
     ],
   },
   {
