@@ -1,4 +1,4 @@
-import type { Instructor } from "../models/Instructor"
+import type { Instructor } from "../../models/Instructor"
 
 export const mockInstructors: Instructor[] = [
   { id: "1", name: "Marcus", surname: "Ríos", email: "marcus.rios@mygym.com" },

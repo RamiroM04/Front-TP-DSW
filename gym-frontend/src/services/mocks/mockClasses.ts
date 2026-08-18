@@ -1,4 +1,4 @@
-import type { ClassSchedule } from "../models/ClassSchedule"
+import type { ClassSchedule } from "../../models/ClassSchedule"
 
 export const mockClasses: ClassSchedule[] = [
   {
