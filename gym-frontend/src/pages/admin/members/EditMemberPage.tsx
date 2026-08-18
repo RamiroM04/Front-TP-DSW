@@ -1,26 +1,20 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import { CreditCard, HandCoins, Landmark } from 'lucide-react'
 import { toast } from 'sonner'
+import { CreditCard, HandCoins, Landmark } from 'lucide-react'
 
-
-import { type CreateMemberInput, type Member, type UpdateMemberInput } from '../../models/Member'
-import { type Membership } from '../../models/Membership'
-import { memberService } from '@/services/memberService'
-import { membershipPlanService } from '@/services/membershipPlanService'
-import { membershipService } from '@/services/membershipService'
-import { type MembershipPlan } from '../../models/MembershipPlan'
-import MemberForm from '../../components/admin/MemberForm'
 import BreadCrumb from '@/components/BreadCrumb'
 import { Button } from '@/components/ui/button'
+import MemberForm from '@/components/admin/MemberForm'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+
+import { type Member, type UpdateMemberInput } from '@/models/Member'
+import { type Membership } from '@/models/Membership'
+import { memberService } from '@/services/memberService'
+import { membershipService } from '@/services/membershipService'
+import { membershipPlanService } from '@/services/membershipPlanService'
+import { type MembershipPlan } from '@/models/MembershipPlan'
 
 const paymentMethods = [
   { id: 'CREDIT_CARD', label: 'Tarjeta', icon: CreditCard },
@@ -36,8 +30,8 @@ function formatDate(date: Date) {
   }).format(date)
 }
 
-export default function NewMemberPage() {
-  const { id } = useParams<{ id?: string }>()
+export default function EditMemberPage() {
+  const { id } = useParams()
   const navigate = useNavigate()
 
   const [member, setMember] = useState<Member | null>(null)
@@ -47,107 +41,128 @@ export default function NewMemberPage() {
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null)
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<typeof paymentMethods[number]['id']>('CASH')
 
-  const isEditing = !!id
-
   useEffect(() => {
-    const loadData = async () => {
+    const loadMember = async () => {
       try {
         setLoading(true)
+
+        if (!id) {
+          toast.error('ID de miembro no válido')
+          navigate('/administrativo/socios')
+          return
+        }
+
+        const memberData = await memberService.getMemberById(Number(id))
+        setMember(memberData)
+
+        const membershipData = await membershipService.getMembershipByMemberId(Number(id))
+        setMembership(membershipData)
+        setSelectedPlanId(membershipData.membershipPlanId)
+
+
+        if (membershipData.lastPaymentMethod) {
+          setSelectedPaymentMethod(membershipData.lastPaymentMethod as typeof paymentMethods[number]['id'])
+        }
+
         const plansData = await membershipPlanService.getAllMembershipPlans()
         setPlans(plansData)
-
-        if (isEditing && id) {
-          const memberData = await memberService.getMemberById(Number(id))
-          setMember(memberData)
-          const membershipData = await membershipService.getMembershipByMemberId(Number(id))
-          setMembership(membershipData)
-          setSelectedPlanId(membershipData?.membershipPlanId)
-        } else {
-          if (plansData.length > 0) {
-            setSelectedPlanId(plansData[0].id)
-          }
-        }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
+        const errorMessage =
+          err instanceof Error ? err.message : 'Error al cargar miembro'
         toast.error(errorMessage)
         navigate('/administrativo/socios')
       } finally {
         setLoading(false)
       }
     }
-    loadData()
-  }, [id, isEditing, navigate])
+
+    loadMember()
+  }, [id, navigate])
 
   const activationDate = useMemo(() => {
-    if (isEditing && membership) {
+    if (membership) {
       return new Date(membership.startDate)
     }
     return new Date()
-  }, [isEditing, membership])
+  }, [membership])
 
   const expirationDate = useMemo(() => {
-    if (isEditing && membership) {
-      return new Date(membership.endDate)
-    }
-
     if (selectedPlanId && plans.length > 0) {
       const plan = plans.find(p => p.id === selectedPlanId)
-      if (plan) {
-        const nextDueDate = new Date(activationDate)
+      if (plan && membership) {
+        const nextDueDate = new Date(membership.startDate)
         nextDueDate.setDate(nextDueDate.getDate() + plan.durationDays)
         return nextDueDate
       }
     }
+    return new Date(membership?.endDate || new Date())
+  }, [selectedPlanId, plans, membership])
 
-    const nextDueDate = new Date(activationDate)
-    nextDueDate.setMonth(nextDueDate.getMonth() + 1)
-    return nextDueDate
-  }, [isEditing, membership, selectedPlanId, plans, activationDate])
-
-  const handleSubmit = async (data: CreateMemberInput | UpdateMemberInput) => {
+  const handleSubmit = async (data: UpdateMemberInput) => {
     try {
+      if (!id || !membership) {
+        throw new Error('ID de miembro no válido')
+      }
+
+
       if (!selectedPlanId) {
         toast.error('Debes seleccionar un plan')
         return
       }
 
-      if (isEditing && id) {
-        await memberService.update(Number(id), data as UpdateMemberInput)
-        if (membership?.id && selectedPlanId && selectedPlanId !== membership.membershipPlanId) {
-          await membershipService.update(membership.id, {
-            membershipPlanId: selectedPlanId,
-          })
+
+      await memberService.update(Number(id), data)
+
+
+      if (selectedPlanId !== membership.membershipPlanId || selectedPaymentMethod !== membership.lastPaymentMethod) {
+        const selectedPlan = plans.find(p => p.id === selectedPlanId)
+
+        const startDate = new Date(membership.startDate)
+        const endDate = new Date(startDate)
+        if (selectedPlan) {
+          endDate.setDate(endDate.getDate() + selectedPlan.durationDays)
         }
-        toast.success('Socio actualizado correctamente')
-      } else {
-        const dataWithPlan = {
-          ...data,
+
+        await membershipService.update(membership.id, {
           membershipPlanId: selectedPlanId,
           lastPaymentMethod: selectedPaymentMethod,
-          lastPaymentDate: activationDate.toISOString(),
-          lastPaymentAmount: plans.find(p => p.id === selectedPlanId)?.price || 0,
-        } as CreateMemberInput
-        await memberService.create(dataWithPlan)
-        toast.success('Socio creado correctamente')
+          lastPaymentDate: new Date().toISOString(),
+          lastPaymentAmount: selectedPlan?.price,
+          endDate: endDate.toISOString(),
+        })
       }
-      navigate('/administrativo/socios')
+
+      toast.success('Miembro actualizado exitosamente')
+      navigate(`/administrativo/socios`)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
+      const errorMessage =
+        err instanceof Error ? err.message : 'Error desconocido'
       toast.error(errorMessage)
-      throw err
     }
   }
 
   if (loading) {
     return (
       <div className="space-y-4">
+        <BreadCrumb />
         <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            {isEditing ? 'Editar Socio' : 'Nuevo Socio'}
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            Editar Socio
           </h1>
         </section>
-        <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 text-center">
+        <div className="rounded-xl border bg-background px-4 py-6 sm:px-6 text-center">
           <p>Cargando...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!member || !membership) {
+    return (
+      <div className="space-y-4">
+        <BreadCrumb />
+        <div className="rounded-lg border bg-background p-6 text-sm text-muted-foreground">
+          No se encontró el miembro.
         </div>
       </div>
     )
@@ -156,28 +171,27 @@ export default function NewMemberPage() {
   return (
     <div className="space-y-4">
       <BreadCrumb />
+
       <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          {isEditing ? 'Editar Socio' : 'Nuevo Socio'}
+          Edición de Socio
         </h1>
         <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-          Completá los datos del socio, seleccioná un plan y definí el método de pago.
+          Edita los datos del socio, plan y método de pago según sea necesario.
         </p>
       </section>
 
       <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
-        <MemberForm
-          member={member || undefined}
-          onSubmit={handleSubmit}
-        />
+        <MemberForm member={member} onSubmit={handleSubmit} />
       </div>
 
+      {/* ✅ Selección de Plan */}
       {plans.length > 0 && (
         <section className="rounded-xl border bg-background px-4 py-4 sm:px-6 sm:py-6">
           <div className="mb-4 space-y-1">
-            <h2 className="text-lg font-semibold"> Selección de Plan</h2>
+            <h2 className="text-lg font-semibold">Selección de Plan</h2>
             <p className="text-sm text-muted-foreground">
-              Elige uno de los planes disponibles para este socio.
+              Cambiar el plan de membresía.
             </p>
           </div>
 
@@ -197,7 +211,8 @@ export default function NewMemberPage() {
                       setSelectedPlanId(plan.id)
                     }
                   }}
-                  aria-pressed={isSelected}>
+                  aria-pressed={isSelected}
+                >
                   <CardHeader>
                     <div className="flex items-start justify-between gap-3">
                       <div className="space-y-1">
@@ -222,11 +237,12 @@ export default function NewMemberPage() {
         </section>
       )}
 
+      {/* ✅ Método de Pago */}
       <section className="rounded-xl border bg-background px-4 py-4 sm:px-6 sm:py-6">
         <div className="mb-4 space-y-1">
           <h2 className="text-lg font-semibold">Método de Pago</h2>
           <p className="text-sm text-muted-foreground">
-            Seleccioná cómo se realizará el pago de la membresía.
+            Cambiar el método de pago de la membresía.
           </p>
         </div>
 
@@ -259,14 +275,13 @@ export default function NewMemberPage() {
             </p>
           </div>
         </div>
-
       </section>
 
       <section className="flex justify-end gap-2">
         <Button
           type="button"
           variant="outline"
-          onClick={() => navigate('/administrativo/socios')}
+          onClick={() => navigate(`/administrativo/socios/${id}`)}
           className="w-full sm:w-auto"
         >
           Cancelar
@@ -274,8 +289,9 @@ export default function NewMemberPage() {
         <Button
           type="submit"
           form="member-form"
-          className="w-full sm:w-auto">
-          {isEditing ? 'Actualizar Socio' : 'Confirmar Alta'}
+          className="w-full sm:w-auto"
+        >
+          Guardar cambios
         </Button>
       </section>
     </div>

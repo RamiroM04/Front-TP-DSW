@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { Plus } from "lucide-react"
 import type { MembershipPlan, CreateMembershipPlanInput } from "@/models/MembershipPlan"
-import { membershipPlansService } from "@/services/MembershipPlansService"
+import { membershipPlanService } from "@/services/membershipPlanService"
 
 export default function MembershipPlansPage() {
   const [membershipPlans, setMembershipPlans] = useState<MembershipPlan[]>([])
@@ -17,7 +17,7 @@ export default function MembershipPlansPage() {
   useEffect(() => {
     async function loadMembershipPlans() {
       try {
-        const data = await membershipPlansService.getAll()
+        const data = await membershipPlanService.getAll()
         setMembershipPlans(data)
       } catch (error) {
         toast.error("Error al cargar los planes de membresía")
@@ -43,7 +43,7 @@ export default function MembershipPlansPage() {
   // Elimina un plan del estado en memoria.
   async function handleDelete(id: number) {
     try {
-      await membershipPlansService.delete(id)
+      await membershipPlanService.delete(id)
       setMembershipPlans((prev) => prev.filter((p) => p.id !== id))
     } catch (error) {
       toast.error("Error al eliminar el plan de membresía")
@@ -54,7 +54,7 @@ export default function MembershipPlansPage() {
   async function handleSave(data: CreateMembershipPlanInput, id?: number) {
     try {
       if (id !== undefined) {
-        const updatedPlan = await membershipPlansService.update(id, data)
+        const updatedPlan = await membershipPlanService.update(id, data)
         setMembershipPlans((prev) =>
           prev.map((p) => (p.id === updatedPlan.id ? updatedPlan : p))
         )
@@ -62,7 +62,7 @@ export default function MembershipPlansPage() {
         return
       }
 
-      const newPlan = await membershipPlansService.create(data as CreateMembershipPlanInput)
+      const newPlan = await membershipPlanService.create(data as CreateMembershipPlanInput)
       setMembershipPlans((prev) => [...prev, newPlan])
       toast.success("Plan de membresía creado correctamente")
     } catch (error) {

@@ -5,10 +5,11 @@ import { RiAddLine } from '@remixicon/react'
 import { memberService } from '@/services/memberService'
 import MembersDataTable from '@/components/MembersDataTable'
 import { toast } from 'sonner'
-import { type ExtendedMember } from '../../models/ExtendedMember'
+import { type ExtendedMember } from '../../../models/ExtendedMember'
 import { useNavigate } from 'react-router-dom'
 import { membershipPlanService } from '@/services/membershipPlanService'
 import { membershipService } from '@/services/membershipService'
+
 export default function MembersPage(){
   const navigate = useNavigate()
   const [members, setMembers] = useState<ExtendedMember[]>([])
@@ -25,7 +26,7 @@ export default function MembersPage(){
           data.map(async (member) => {
             try{
               const membership = await membershipService.getMembershipByMemberId(member.id);
-              const plan = await membershipPlanService.getMembershipPlanById(membership.membershipPlanId);
+              const plan = await membershipPlanService.getById(membership.membershipPlanId);
               return{
                 ...member,
                 plan: plan.name,
@@ -65,7 +66,7 @@ export default function MembersPage(){
         updated.map(async (member) => {
           try{
             const membership = await membershipService.getMembershipByMemberId(member.id);
-            const plan = await membershipPlanService.getMembershipPlanById(membership.membershipPlanId);
+            const plan = await membershipPlanService.getById(membership.membershipPlanId);
             return{
               ...member,
               plan: plan.name,

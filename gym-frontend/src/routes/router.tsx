@@ -1,14 +1,15 @@
 import { createBrowserRouter } from 'react-router-dom'
 import NotFoundPage from '../pages/NotFoundPage'
+import LoginPage from '../pages/LoginPage'
 import RoleLayout from '../layouts/RoleLayout'
 import TemporalLanding from '../pages/TemporaryLandingPage'
-import AdminClassesPage from '../pages/admin/ClassesPage'
-import MembersPage from '../pages/admin/MembersPage'
-import NewMemberPage from '../pages/admin/NewMemberPage'
-import EditMemberPage from '@/pages/admin/EditMemberPage'
-import MemberDetailsPage from '@/pages/admin/MemberDetailsPage'
-import MembershipPlansPage from '../pages/admin/MembershipPlansPage'
-import ClassScheduleFormPage from '../pages/admin/ClassScheduleFormPage'
+import AdminClassesPage from '../pages/admin/classesSchedule/ClassesPage'
+import MembersPage from '../pages/admin/members/MembersPage'
+import NewMemberPage from '../pages/admin/members/NewMemberPage'
+import EditMemberPage from '@/pages/admin/members/EditMemberPage'
+import MemberDetailsPage from '@/pages/admin/members/MemberDetailsPage'
+import MembershipPlansPage from '../pages/admin/membershipPlans/MembershipPlansPage'
+import ClassScheduleFormPage from '../pages/admin/classesSchedule/EditClassPage'
 import RutinasPage from '../pages/instructor/RutinasPage'
 import EjerciciosPage from '../pages/instructor/EjerciciosPage'
 import MemberClassesPage from '../pages/member/ClassesPage'
@@ -19,6 +20,10 @@ import MemberClassesPage from '../pages/member/ClassesPage'
 export const router = createBrowserRouter([
   {
     path: '/',
+    element: <LoginPage />,
+  },
+  {
+    path: '/project-overview',
     element: <TemporalLanding />,
   },
   {
