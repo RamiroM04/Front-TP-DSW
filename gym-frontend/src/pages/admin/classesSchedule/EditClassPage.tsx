@@ -17,8 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { mockClasses } from "@/services/mockClasses"
-import { mockInstructors } from "@/services/mockInstructors"
+import { mockClasses } from "@/services/mocks/mockClasses"
+import { mockInstructors } from "@/services/mocks/mockInstructors"
 import type { ClassCategory, ClassSchedule, DayOfWeek } from "@/models/ClassSchedule"
 
 const categories: ClassCategory[] = ["HIIT", "Strength", "Zen", "Cardio"]

@@ -1,22 +1,22 @@
-import type { Plan } from "../models/Plan"
+import type { MembershipPlan } from "../../models/MembershipPlan"
 
-export const mockPlans: Plan[] = [
+export const mockPlans: MembershipPlan[] = [
   {
-    id: "plan-basic",
+    id: 1,
     name: "Plan Básico",
     price: 28000,
     durationDays: 30,
     description: "Acceso libre a sala de musculación.",
   },
   {
-    id: "plan-plus",
+    id: 2,
     name: "Plan Plus",
     price: 36000,
     durationDays: 30,
     description: "Musculación + clases grupales.",
   },
   {
-    id: "plan-premium",
+    id: "MOCKplan-premium",
     name: "Plan Premium",
     price: 49000,
     durationDays: 30,

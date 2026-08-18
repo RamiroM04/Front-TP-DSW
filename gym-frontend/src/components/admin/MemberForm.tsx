@@ -9,9 +9,9 @@ type MemberFormProps = {
   onSubmit: (data: CreateMemberInput | UpdateMemberInput) => Promise<void>
 }
 
-export default function MemberForm({ 
-  member, 
-  onSubmit, 
+export default function MemberForm({
+  member,
+  onSubmit,
 }: MemberFormProps) {
   const [error, setError] = useState<string | null>(null)
 
@@ -33,7 +33,7 @@ export default function MemberForm({
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({
-      ...prev, 
+      ...prev,
       [name]: name === 'membershipPlanId' ? parseInt(value) : value,
     }))
   }
@@ -45,17 +45,17 @@ export default function MemberForm({
     try {
       const dataToSubmit: CreateMemberInput | UpdateMemberInput = member
         ? {
-            name: formData.name, 
-            surname: formData.surname,
-            email: formData.email, 
-            phone: formData.phone, 
-            docType: formData.docType, 
-            docNumber: formData.docNumber,
-            birthDate: formData.birthDate, 
-            status: formData.status
-          }
+          name: formData.name,
+          surname: formData.surname,
+          email: formData.email,
+          phone: formData.phone,
+          docType: formData.docType,
+          docNumber: formData.docNumber,
+          birthDate: formData.birthDate,
+          status: formData.status
+        }
         : formData
-      
+
       await onSubmit(dataToSubmit)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido')
@@ -68,7 +68,7 @@ export default function MemberForm({
         <User className="size-5" aria-hidden="true" />
         {member ? 'Editar socio' : 'Información del socio'}
       </h3>
-      
+
       {error && (
         <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
           {error}
@@ -80,9 +80,9 @@ export default function MemberForm({
           <label htmlFor="name" className="text-sm font-medium">
             Nombre
           </label>
-          <Input 
-            id="name" 
-            name="name" 
+          <Input
+            id="name"
+            name="name"
             placeholder="Nombre"
             value={formData.name}
             onChange={handleChange}
@@ -94,9 +94,9 @@ export default function MemberForm({
           <label htmlFor="surname" className="text-sm font-medium">
             Apellido
           </label>
-          <Input 
-            id="surname" 
-            name="surname" 
+          <Input
+            id="surname"
+            name="surname"
             placeholder="Apellido"
             value={formData.surname}
             onChange={handleChange}
@@ -108,9 +108,9 @@ export default function MemberForm({
           <label htmlFor="birthDate" className="text-sm font-medium">
             Fecha de nacimiento
           </label>
-          <Input 
-            id="birthDate" 
-            name="birthDate" 
+          <Input
+            id="birthDate"
+            name="birthDate"
             type="date"
             value={formData.birthDate}
             onChange={handleChange}
@@ -121,9 +121,9 @@ export default function MemberForm({
           <label htmlFor="docNumber" className="text-sm font-medium">
             Nº de documento
           </label>
-          <Input 
-            id="docNumber" 
-            name="docNumber" 
+          <Input
+            id="docNumber"
+            name="docNumber"
             placeholder="12345678"
             value={formData.docNumber}
             onChange={handleChange}
@@ -135,8 +135,8 @@ export default function MemberForm({
           <label htmlFor="docType" className="text-sm font-medium">
             Tipo de documento
           </label>
-          <select 
-            id="docType" 
+          <select
+            id="docType"
             name="docType"
             value={formData.docType}
             onChange={handleChange}
@@ -152,10 +152,10 @@ export default function MemberForm({
           <label htmlFor="email" className="text-sm font-medium">
             Email
           </label>
-          <Input 
-            id="email" 
-            name="email" 
-            type="email" 
+          <Input
+            id="email"
+            name="email"
+            type="email"
             placeholder="correo@ejemplo.com"
             value={formData.email}
             onChange={handleChange}
@@ -167,9 +167,9 @@ export default function MemberForm({
           <label htmlFor="phone" className="text-sm font-medium">
             Teléfono
           </label>
-          <Input 
-            id="phone" 
-            name="phone" 
+          <Input
+            id="phone"
+            name="phone"
             placeholder="+54 9 11 1234 5678"
             value={formData.phone || ''}
             onChange={handleChange}
@@ -180,8 +180,8 @@ export default function MemberForm({
           <label htmlFor="status" className="text-sm font-medium">
             Estado
           </label>
-          <select 
-            id="status" 
+          <select
+            id="status"
             name="status"
             value={formData.status}
             onChange={handleChange}
@@ -189,9 +189,9 @@ export default function MemberForm({
           >
             <option value="ACTIVE">Activo</option>
             <option value="INACTIVE">Inactivo</option>
-          </select>
-        </div>
-      </div>
+          </select >
+        </div >
+      </div >
 
     </form>
   )

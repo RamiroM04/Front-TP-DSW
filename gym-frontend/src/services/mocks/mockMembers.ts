@@ -1,4 +1,4 @@
-import type { Member } from "../models/Member"
+import type { Member } from "../../models/Member"
 
 export const mockMembers: Member[] = [
   {

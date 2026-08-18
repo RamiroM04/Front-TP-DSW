@@ -58,7 +58,7 @@ export default function EditMemberPage() {
         const membershipData = await membershipService.getMembershipByMemberId(Number(id))
         setMembership(membershipData)
         setSelectedPlanId(membershipData.membershipPlanId)
-        
+
 
         if (membershipData.lastPaymentMethod) {
           setSelectedPaymentMethod(membershipData.lastPaymentMethod as typeof paymentMethods[number]['id'])
@@ -116,7 +116,7 @@ export default function EditMemberPage() {
 
       if (selectedPlanId !== membership.membershipPlanId || selectedPaymentMethod !== membership.lastPaymentMethod) {
         const selectedPlan = plans.find(p => p.id === selectedPlanId)
-        
+
         const startDate = new Date(membership.startDate)
         const endDate = new Date(startDate)
         if (selectedPlan) {
@@ -128,7 +128,7 @@ export default function EditMemberPage() {
           lastPaymentMethod: selectedPaymentMethod,
           lastPaymentDate: new Date().toISOString(),
           lastPaymentAmount: selectedPlan?.price,
-          endDate: endDate.toISOString(), 
+          endDate: endDate.toISOString(),
         })
       }
 

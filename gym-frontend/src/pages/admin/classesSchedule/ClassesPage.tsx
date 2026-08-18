@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import ClassesDataTable from "@/components/ClassesDataTable"
-import { mockClasses } from "@/services/mockClasses"
-import { mockInstructors } from "@/services/mockInstructors"
+import { mockClasses } from "@/services/mocks/mockClasses"
+import { mockInstructors } from "@/services/mocks/mockInstructors"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { RiAddLine } from "@remixicon/react"
@@ -32,7 +32,7 @@ export default function ClassesPage() {
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div className="space-y-3">
             <div className="space-y-1.5">
-              <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Clases</h1>
+              <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Clases (Usa mock data)</h1>
               <p className="max-w-2xl text-sm sm:text-base">
                 Gestioná las clases recurrentes del gimnasio. Podés agregar, editar o eliminar clases según sea necesario.
               </p>
