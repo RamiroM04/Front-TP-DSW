@@ -14,7 +14,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import {
-  RiAddLine,
   RiArrowDownLine,
   RiArrowLeftSLine,
   RiArrowRightSLine,
@@ -22,17 +21,16 @@ import {
   RiDeleteBinLine,
   RiDownloadLine,
   RiExpandUpDownLine,
+  RiEyeLine,
   RiLayoutColumnLine,
   RiMoreLine,
   RiPencilLine,
   RiSearchLine,
-  RiUserLine,
   RiUserSettingsLine,
 } from "@remixicon/react"
 import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -58,41 +56,40 @@ import {
 } from "@/components/ui/table"
 import { useIsMobile } from "@/hooks/use-mobile"
 
-import type { Member, Role, Status } from "../models/Member"
+import type { Status } from "../models/Member"
+import type { ExtendedMember } from "../models/ExtendedMember" 
+import { useNavigate } from 'react-router-dom'
 
-type SociosDataTableProps = {
-  initialData: Member[]
+
+type MembersDataTableProps = {
+  initialData: ExtendedMember[]
   title?: string
   subtitle?: string
+  onEdit?: (id: number) => void 
+  onDelete?: (id: number) => void 
 }
 
 const statusVariant: Record<Status, "default" | "secondary" | "outline"> = {
-  Active: "default",
-  Invited: "secondary",
-  Inactive: "outline",
-}
-
-const roleClass: Record<Role, string> = {
-  Admin: "text-foreground font-medium",
-  Editor: "text-muted-foreground",
-  Viewer: "text-muted-foreground",
+  ACTIVE: "default",
+  INACTIVE: "secondary"
 }
 
 const COLUMN_LABELS: Record<string, string> = {
   name: "Socio",
   status: "Estado",
-  role: "Plan",
+  plan: "Plan",
   nextExpiration: "Próximo Vencimiento",
-  joined: "Fecha de Inscripción",
+  createdAt: "Fecha de Inscripción",
 }
 
-const dateFmt = new Intl.DateTimeFormat("en-US", {
-  month: "short",
+const dateFmt = new Intl.DateTimeFormat("es-ES", {
   day: "2-digit",
+  month: "short",
   year: "numeric",
 })
 
-function formatDate(value: string) {
+function formatDate(value: string | undefined) {
+  if (!value) return '-'
   const parsed = new Date(value)
   return Number.isNaN(parsed.getTime()) ? value : dateFmt.format(parsed)
 }
@@ -112,188 +109,18 @@ function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
   )
 }
 
-const columns: ColumnDef<Member>[] = [
-  {
-    id: "select",
-    enableSorting: false,
-    enableHiding: false,
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected()
-            ? true
-            : table.getIsSomePageRowsSelected()
-              ? "indeterminate"
-              : false
-        }
-        onCheckedChange={(checked) =>
-          table.toggleAllPageRowsSelected(checked === true)
-        }
-        aria-label="Select all members on this page"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(checked) => row.toggleSelected(checked === true)}
-        aria-label={`Select ${row.original.name}`}
-      />
-    ),
-  },
-  {
-    accessorKey: "name",
-    enableHiding: false,
-    header: ({ column }) => (
-      <button
-        type="button"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="-mx-1 inline-flex items-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
-      >
-        Socio
-        <SortIcon sorted={column.getIsSorted()} />
-      </button>
-    ),
-    filterFn: (row, _id, value: string) => {
-      const q = value.toLowerCase()
-      return (
-        row.original.name.toLowerCase().includes(q) ||
-        row.original.email.toLowerCase().includes(q)
-      )
-    },
-    cell: ({ row }) => {
-      const member = row.original
-      return (
-        <div className="flex min-w-0 items-center gap-3">
-          <Avatar size="sm" className="shrink-0 border border-border">
-            <AvatarImage
-              src={member.avatar}
-              alt={member.name}
-              className="grayscale"
-            />
-            <AvatarFallback className="text-xs">{member.initials}</AvatarFallback>
-          </Avatar>
-          <div className="min-w-0">
-            <p className="truncate text-sm leading-tight font-medium">{member.name}</p>
-            <p className="truncate text-xs text-muted-foreground">{member.email}</p>
-          </div>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: "role",
-    header: ({ column }) => (
-      <button
-        type="button"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="-mx-1 inline-flex items-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
-      >
-        Plan
-        <SortIcon sorted={column.getIsSorted()} />
-      </button>
-    ),
-    cell: ({ row }) => (
-      <span className={cn("text-sm", roleClass[row.original.role])}>{row.original.role}</span>
-    ),
-  },
-  {
-    accessorKey: "status",
-    enableSorting: false,
-    header: () => (
-      <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-        Estado
-      </span>
-    ),
-    cell: ({ row }) => (
-      <Badge variant={statusVariant[row.original.status]} className="text-xs">
-        {row.original.status}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: "nextExpiration",
-    sortingFn: "datetime",
-    header: ({ column }) => (
-      <button
-        type="button"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="-mx-1 inline-flex items-center justify-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
-      >
-        Próximo Vencimiento
-        <SortIcon sorted={column.getIsSorted()} />
-      </button>
-    ),
-    cell: ({ row }) => (
-      <span className="block text-center text-xs text-muted-foreground tabular-nums">
-        {formatDate(row.original.nextExpiration ?? row.original.joined)}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "joined",
-    sortingFn: "datetime",
-    header: ({ column }) => (
-      <button
-        type="button"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="-mx-1 inline-flex items-center justify-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
-      >
-        Fecha de Inscripción
-        <SortIcon sorted={column.getIsSorted()} />
-      </button>
-    ),
-    cell: ({ row }) => (
-      <span className="block text-center text-xs text-muted-foreground tabular-nums">
-        {formatDate(row.original.joined)}
-      </span>
-    ),
-  },
-  {
-    id: "actions",
-    enableSorting: false,
-    enableHiding: false,
-    header: () => <span className="sr-only">Actions</span>,
-    cell: ({ row }) => (
-      <div className="flex justify-center">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              aria-label={`Actions for ${row.original.name}`}
-            >
-              <RiMoreLine className="size-4" aria-hidden="true" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuItem>
-              <RiUserLine aria-hidden="true" />
-              Ver perfil
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <RiPencilLine aria-hidden="true" />
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">
-              <RiDeleteBinLine aria-hidden="true" />
-              Eliminar
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    ),
-  },
-]
-
-export default function SociosDataTable({
+export default function MembersDataTable({
   initialData,
-  title = "Socios",
+  title,
   subtitle,
-}: SociosDataTableProps) {
+  onEdit, 
+  onDelete, 
+}: MembersDataTableProps) {
+  const navigate = useNavigate()
+
   const isMobile = useIsMobile()
   const [sorting, setSorting] = React.useState<SortingState>([
-    { id: "joined", desc: true },
+    { id: "createdAt", desc: true },
   ])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -307,10 +134,183 @@ export default function SociosDataTable({
     setData(initialData)
   }, [initialData])
 
+
+  const columns: ColumnDef<ExtendedMember>[] = [
+    {
+      id: "select",
+      enableSorting: false,
+      enableHiding: false,
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected()
+              ? true
+              : table.getIsSomePageRowsSelected()
+                ? "indeterminate"
+                : false
+          }
+          onCheckedChange={(checked) =>
+            table.toggleAllPageRowsSelected(checked === true)
+          }
+          aria-label="Select all members on this page"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(checked) => row.toggleSelected(checked === true)}
+          aria-label={`Select ${row.original.name}`}
+        />
+      ),
+    },
+    {
+      accessorKey: "name",
+      enableHiding: false,
+      header: ({ column }) => (
+        <button
+          type="button"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="-mx-1 inline-flex items-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
+        >
+          Socio
+          <SortIcon sorted={column.getIsSorted()} />
+        </button>
+      ),
+      filterFn: (row, _id, value: string) => {
+        const q = value.toLowerCase()
+        return (
+          row.original.name.toLowerCase().includes(q) ||
+          row.original.surname.toLowerCase().includes(q) ||
+          row.original.email.toLowerCase().includes(q)
+        )
+      },
+      cell: ({ row }) => {
+        const member = row.original
+        return (
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="min-w-0">
+              <p className="truncate text-sm leading-tight font-medium">{member.name} {member.surname}</p>
+              <p className="truncate text-xs text-muted-foreground">{member.email}</p>
+            </div>
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: "plan",
+      header: ({ column }) => (
+        <button
+          type="button"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="-mx-1 inline-flex items-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
+        >
+          Plan
+          <SortIcon sorted={column.getIsSorted()} />
+        </button>
+      ),
+      cell: ({ row }) => (
+        <span className="text-sm">{row.original.plan || 'Sin plan'}</span>
+      ),
+    },
+    {
+      accessorKey: "status",
+      enableSorting: false,
+      header: () => (
+        <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+          Estado
+        </span>
+      ),
+      cell: ({ row }) => (
+        <Badge variant={statusVariant[row.original.status]} className="text-xs">
+          {row.original.status === 'ACTIVE' ? 'Activo' : 'Inactivo'}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: "nextExpiration",
+      sortingFn: "datetime",
+      header: ({ column }) => (
+        <button
+          type="button"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="-mx-1 inline-flex items-center justify-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
+        >
+          Próximo Vencimiento
+          <SortIcon sorted={column.getIsSorted()} />
+        </button>
+      ),
+      cell: ({ row }) => (
+        <span className="block text-center text-xs text-muted-foreground tabular-nums">
+          {formatDate(row.original.nextExpiration)}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      sortingFn: "datetime",
+      header: ({ column }) => (
+        <button
+          type="button"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="-mx-1 inline-flex items-center justify-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
+        >
+          Fecha de Inscripción
+          <SortIcon sorted={column.getIsSorted()} />
+        </button>
+      ),
+      cell: ({ row }) => (
+        <span className="block text-center text-xs text-muted-foreground tabular-nums">
+          {formatDate(row.original.createdAt)}
+        </span>
+      ),
+    },
+
+    {
+      id: "actions",
+      enableSorting: false,
+      enableHiding: false,
+      header: () => <span className="sr-only">Actions</span>,
+      cell: ({ row }) => (
+        <div className="flex justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={`Actions for ${row.original.name}`}
+              >
+                <RiMoreLine className="size-4" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem onClick={() => navigate(`/administrativo/socios/${row.original.id}`)}
+              >
+                <RiEyeLine aria-hidden= "true"/>
+                Ver perfil
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onEdit?.(row.original.id)}>
+                <RiPencilLine aria-hidden="true" />
+                Editar
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                variant="destructive" 
+                onClick={() => onDelete?.(row.original.id)}
+              >
+                <RiDeleteBinLine aria-hidden="true" />
+                Eliminar
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+    },
+  ]
+
   const table = useReactTable({
     data,
     columns,
-    getRowId: (row) => row.id,
+    getRowId: (row) => row.id.toString(),
     state: { sorting, columnFilters, columnVisibility, rowSelection },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -328,8 +328,7 @@ export default function SociosDataTable({
       if (Object.keys(prev).length > 0) {
         return prev
       }
-
-      return isMobile ? { nextExpiration: false, joined: false } : {}
+      return isMobile ? { nextExpiration: false, createdAt: false } : {}
     })
   }, [isMobile])
 
@@ -342,7 +341,7 @@ export default function SociosDataTable({
     const selectedIds = new Set(
       table.getFilteredSelectedRowModel().rows.map((row) => row.id)
     )
-    setData((prev) => prev.filter((row) => !selectedIds.has(row.id)))
+    setData((prev) => prev.filter((row) => !selectedIds.has(row.id.toString())))
     table.resetRowSelection()
     toast("Members removed", {
       description: `${selectedIds.size} ${selectedIds.size === 1 ? "member" : "members"} removed from the workspace.`,
@@ -350,19 +349,19 @@ export default function SociosDataTable({
   }
 
   return (
-    <section className="flex min-h-svh w-full justify-center bg-background px-4 py-10 text-foreground sm:py-16">
-      <div className="w-full max-w-6xl">
+    <section className="w-full">
+      <div className="w-full">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-3">
             <div>
-              <h1 className="text-2xl font-semibold">{title}</h1>
+              <h1 className="text-2xl font-semibold">{title ?? ""}</h1>
               <p className="text-sm text-muted-foreground">
-                {subtitle ?? `${data.length} socios inscriptos en la sucursal`}
+                {subtitle ?? ""}
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative w-full sm:w-auto">
+          <div className="flex w-full flex-nowrap items-center gap-2 sm:w-auto sm:flex-wrap">
+            <div className="relative min-w-0 flex-1 sm:w-auto sm:flex-none">
               <RiSearchLine
                 className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
@@ -380,7 +379,12 @@ export default function SociosDataTable({
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" aria-label="Toggle columns">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0"
+                  aria-label="Toggle columns"
+                >
                   <RiLayoutColumnLine className="size-3.5" aria-hidden="true" />
                   Columnas
                 </Button>
@@ -406,10 +410,6 @@ export default function SociosDataTable({
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button size="sm">
-              <RiAddLine className="mr-1 size-3.5" aria-hidden="true" />
-              Nuevo Socio
-            </Button>
           </div>
         </div>
 
@@ -482,7 +482,7 @@ export default function SociosDataTable({
                         header.column.id === "select" && "pl-4 text-left",
                         header.column.id === "name" && "pl-2 text-left",
                         (header.column.id === "nextExpiration" ||
-                          header.column.id === "joined") && "px-3"
+                          header.column.id === "createdAt") && "px-3"
                       )}
                     >
                       {header.isPlaceholder
@@ -511,7 +511,7 @@ export default function SociosDataTable({
                           "py-3 text-center align-middle",
                           cell.column.id === "select" && "pl-4 text-left",
                           cell.column.id === "name" && "pl-2",
-                          (cell.column.id === "joined" ||
+                          (cell.column.id === "createdAt" ||
                             cell.column.id === "nextExpiration") && "px-3"
                         )}
                       >

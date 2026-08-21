@@ -1,24 +1,43 @@
 import { createBrowserRouter } from 'react-router-dom'
 import NotFoundPage from '../pages/NotFoundPage'
+import LoginPage from '../pages/LoginPage'
 import RoleLayout from '../layouts/RoleLayout'
 import TemporalLanding from '../pages/TemporaryLandingPage'
-import { ClasesPage } from '../pages/admin/ClasesPage'
-import SociosPage1 from '../pages/admin/SociosPage'
+import AdminClassesPage from '../pages/admin/classesSchedule/ClassesPage'
+import MembersPage from '../pages/admin/members/MembersPage'
+import NewMemberPage from '../pages/admin/members/NewMemberPage'
+import EditMemberPage from '@/pages/admin/members/EditMemberPage'
+import MemberDetailsPage from '@/pages/admin/members/MemberDetailsPage'
+import MembershipPlansPage from '../pages/admin/membershipPlans/MembershipPlansPage'
+import ClassScheduleFormPage from '../pages/admin/classesSchedule/EditClassPage'
 import RutinasPage from '../pages/instructor/RutinasPage'
 import EjerciciosPage from '../pages/instructor/EjerciciosPage'
-import ClassesPage from '../pages/member/ClassesPage'
+import MemberClassesPage from '../pages/member/ClassesPage'
+
+
+//TODO: Implementar lazy loading para las páginas de cada rol, para que no se carguen todas al inicio y solo se carguen cuando el usuario accede a la ruta correspondiente.
 
 export const router = createBrowserRouter([
   {
     path: '/',
+    element: <LoginPage />,
+  },
+  {
+    path: '/project-overview',
     element: <TemporalLanding />,
   },
   {
     path: '/administrativo',
     element: <RoleLayout role="admin" />,
     children: [
-      { path: 'clases', element: <ClasesPage /> },
-      { path: 'socios', element: <SociosPage1 /> },
+      { path: 'clases', element: <AdminClassesPage /> },
+      { path: 'clases/nueva', element: <ClassScheduleFormPage /> },
+      { path: 'clases/:id/editar', element: <ClassScheduleFormPage /> },
+      { path: 'socios', element: <MembersPage /> },
+      { path: 'socios/nuevo', element: <NewMemberPage /> },
+      { path: 'socios/editar/:id', element: <EditMemberPage /> },
+      { path: 'socios/:id', element: <MemberDetailsPage /> },
+      { path: 'planes', element: <MembershipPlansPage /> },
     ],
   },
   {
@@ -36,7 +55,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <div className="p-4 text-2xl font-bold">Inicio Socio</div> },
       { path: 'rutinas', element: <RutinasPage /> },
-      { path: 'clases', element: <ClassesPage /> }
+      { path: 'clases', element: <MemberClassesPage /> }
     ],
   },
 

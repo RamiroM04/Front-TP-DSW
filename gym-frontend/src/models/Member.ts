@@ -1,17 +1,41 @@
-export type Status = "Active" | "Invited" | "Inactive"
-export type Role = "Admin" | "Editor" | "Viewer"
-
-// Este tipo esta siendo utilizado por el mockMembers.ts y por la pagina de SociosPage1.tsx
-// TODO: Unificar con el Socio model y controlar consistencia con el backend
+export type Status = 'ACTIVE' | 'INACTIVE';
+export type DocType = 'DNI' | 'PASAPORTE';
 
 export type Member = {
-  id: string
-  name: string
-  initials: string
-  avatar: string
-  email: string
-  status: Status
-  role: Role
-  joined: string
-  nextExpiration?: string
-}
+  id: number;
+  name: string;
+  surname: string;
+  docType: DocType;
+  docNumber: string;
+  birthDate: string;
+  email: string;
+  phone: string | null;
+  status: Status;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  nextExpiration?: string;
+};
+
+export type CreateMemberInput = {
+  name: string;
+  surname: string;
+  email: string;
+  phone?: string | null;
+  docType: DocType;
+  docNumber: string;
+  birthDate: string;
+  status: Status;
+  membershipPlanId: number;
+  lastPaymentMethod?:
+    | 'CREDIT_CARD'
+    | 'DEBIT_CARD'
+    | 'TRANSFER'
+    | 'CASH'
+    | 'OTHER';
+  lastPaymentDate?: string;
+  lastPaymentAmount?: number;
+};
+export type UpdateMemberInput = Partial<
+  Omit<Member, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
+>;
