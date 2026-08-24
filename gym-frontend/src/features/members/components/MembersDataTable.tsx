@@ -286,7 +286,7 @@ export default function MembersDataTable({
               <DropdownMenuItem onClick={() => navigate(`/administrativo/socios/${row.original.id}`)}
               >
                 <RiEyeLine aria-hidden="true" />
-                Ver perfil
+                Ver detalles
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onEdit?.(row.original.id)}>
                 <RiPencilLine aria-hidden="true" />

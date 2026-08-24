@@ -81,7 +81,7 @@ export default function EditMemberPage() {
         </p>
       </section>
 
-      <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
+      <div>
         <MemberForm member={member} onSubmit={handleSubmit} />
       </div>
 

@@ -1,7 +1,14 @@
 import { Input } from "@/shared/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select"
 import { User } from "lucide-react"
 import { useState } from "react"
-import { type Member, type CreateMemberInput, type UpdateMemberInput } from "../models/Member.ts"
+import { type Member, type CreateMemberInput, type UpdateMemberInput, type DocType, type Status } from "../models/Member.ts"
 
 type MemberFormProps = {
   showActions?: boolean
@@ -132,17 +139,20 @@ export default function MemberForm({
           <label htmlFor="docType" className="text-sm font-medium">
             Tipo de documento
           </label>
-          <select
-            id="docType"
-            name="docType"
+          <Select
             value={formData.docType}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            onValueChange={(val) =>
+              setFormData((prev) => ({ ...prev, docType: val as DocType }))
+            }
           >
-            <option value="DNI">DNI</option>
-            <option value="PASAPORTE">Pasaporte</option>
-            <option value="CEDULA">Cédula</option>
-          </select>
+            <SelectTrigger id="docType" className="w-full">
+              <SelectValue placeholder="Tipo de documento" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="DNI">DNI</SelectItem>
+              <SelectItem value="PASAPORTE">Pasaporte</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
@@ -175,18 +185,25 @@ export default function MemberForm({
           <label htmlFor="status" className="text-sm font-medium">
             Estado
           </label>
-          <select
-            id="status"
-            name="status"
+          <Select
             value={formData.status}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded"
+            onValueChange={(val) =>
+              setFormData((prev) => ({
+                ...prev,
+                status: val as Status,
+              }))
+            }
           >
-            <option value="ACTIVE">Activo</option>
-            <option value="INACTIVE">Inactivo</option>
-          </select >
-        </div >
-      </div >
+            <SelectTrigger id="status" className="w-full">
+              <SelectValue placeholder="Estado" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ACTIVE">Activo</SelectItem>
+              <SelectItem value="INACTIVE">Inactivo</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
     </form>
   )
