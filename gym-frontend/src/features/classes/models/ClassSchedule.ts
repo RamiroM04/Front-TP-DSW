@@ -1,4 +1,4 @@
-export type ClassCategory = "HIIT" | "Strength" | "Zen" | "Cardio"
+export type ClassCategory = "Todos" | "HIIT" | "Strength" | "Zen" | "Cardio"
 
 export type DayOfWeek =
   | "Lunes"
@@ -14,9 +14,19 @@ export interface ClassSchedule {
   name: string
   description: string
   category: ClassCategory
-  instructorId: string   // referencia al id de un Instructor, no una copia de su nombre
+  instructorId: string
+  instructorName?: string
   dayOfWeek: DayOfWeek
   startTime: string
   durationMinutes: number
   maxCapacity: number
+  currentCapacity?: number
+  reserved?: boolean
+  status?: string
+}
+
+export interface ClassDateOption {
+  day: string
+  date: string
+  active?: boolean
 }
