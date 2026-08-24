@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import BreadCrumb from '@/shared/components/BreadCrumb'
 import { Button } from '@/shared/components/ui/button'
 import MemberForm from '@/features/members/components/MemberForm'
-import PlanSelector from '@/features/members/components/PlanSelector'
-import PaymentMethodSelector from '@/features/members/components/PaymentMethodSelector'
+import PlanSelector from '@/features/membershipPlans/components/PlanSelector'
+import PaymentMethodSelector from '@/features/memberships/components/PaymentMethodSelector'
 import { useEditMember } from '@/features/members/hooks/useEditMember'
 
 export default function EditMemberPage() {
@@ -26,7 +26,12 @@ export default function EditMemberPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <BreadCrumb />
+        <BreadCrumb
+          crumbs={[
+            { label: 'Socios', href: '/administrativo/socios' },
+            { label: 'Editar Socio' },
+          ]}
+        />
         <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
           <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
             Editar Socio
@@ -42,7 +47,12 @@ export default function EditMemberPage() {
   if (!member || !membership) {
     return (
       <div className="space-y-4">
-        <BreadCrumb />
+        <BreadCrumb
+          crumbs={[
+            { label: 'Socios', href: '/administrativo/socios' },
+            { label: 'Editar Socio' },
+          ]}
+        />
         <div className="rounded-lg border bg-background p-6 text-sm text-muted-foreground">
           No se encontró el miembro.
         </div>
@@ -50,9 +60,17 @@ export default function EditMemberPage() {
     )
   }
 
+  const memberName = `${member.name} ${member.surname}`
+
   return (
     <div className="space-y-4">
-      <BreadCrumb />
+      <BreadCrumb
+        crumbs={[
+          { label: 'Socios', href: '/administrativo/socios' },
+          { label: memberName, href: `/administrativo/socios/${id}` },
+          { label: 'Editar' },
+        ]}
+      />
 
       <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">

@@ -10,7 +10,12 @@ export default function MemberDetailsPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <BreadCrumb />
+        <BreadCrumb
+          crumbs={[
+            { label: 'Socios', href: '/administrativo/socios' },
+            { label: 'Cargando...' },
+          ]}
+        />
         <div className="rounded-xl border bg-background px-4 py-6 sm:px-6 text-center">
           <p>Cargando perfil...</p>
         </div>
@@ -21,7 +26,12 @@ export default function MemberDetailsPage() {
   if (!member || !membership) {
     return (
       <div className="space-y-4">
-        <BreadCrumb />
+        <BreadCrumb
+          crumbs={[
+            { label: 'Socios', href: '/administrativo/socios' },
+            { label: 'Perfil de socio' },
+          ]}
+        />
         <div className="rounded-lg border bg-background p-6 text-sm text-muted-foreground">
           No se encontró el perfil del socio.
         </div>
@@ -29,9 +39,16 @@ export default function MemberDetailsPage() {
     )
   }
 
+  const memberName = `${member.name} ${member.surname}`
+
   return (
     <div className="space-y-4">
-      <BreadCrumb />
+      <BreadCrumb
+        crumbs={[
+          { label: 'Socios', href: '/administrativo/socios' },
+          { label: memberName },
+        ]}
+      />
 
       <MemberDetailsHeader member={member} />
 

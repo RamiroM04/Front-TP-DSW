@@ -1,3 +1,5 @@
+import React from 'react'
+import { Link } from 'react-router-dom'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -5,25 +7,42 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/shared/components/ui/breadcrumb"
+} from '@/shared/components/ui/breadcrumb'
 
-export default function BreadCrumb() {
+export type Crumb = {
+  label: string
+  href?: string
+}
+
+export type BreadCrumbProps = {
+  crumbs: Crumb[]
+  className?: string
+}
+
+export default function BreadCrumb({ crumbs, className }: BreadCrumbProps) {
+  if (!crumbs || crumbs.length === 0) return null
+
   return (
-    <Breadcrumb>
+    <Breadcrumb className={className}>
       <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/components">
-            Components
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-        </BreadcrumbItem>
+        {crumbs.map((crumb, index) => {
+          const isLast = index === crumbs.length - 1
+
+          return (
+            <React.Fragment key={index}>
+              <BreadcrumbItem>
+                {isLast || !crumb.href ? (
+                  <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink asChild>
+                    <Link to={crumb.href}>{crumb.label}</Link>
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+              {!isLast && <BreadcrumbSeparator />}
+            </React.Fragment>
+          )
+        })}
       </BreadcrumbList>
     </Breadcrumb>
   )

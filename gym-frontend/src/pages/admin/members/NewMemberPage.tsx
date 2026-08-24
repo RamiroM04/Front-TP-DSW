@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import BreadCrumb from '@/shared/components/BreadCrumb'
 import { Button } from '@/shared/components/ui/button'
 import MemberForm from '@/features/members/components/MemberForm'
-import PlanSelector from '@/features/members/components/PlanSelector'
-import PaymentMethodSelector from '@/features/members/components/PaymentMethodSelector'
+import PlanSelector from '@/features/membershipPlans/components/PlanSelector'
+import PaymentMethodSelector from '@/features/memberships/components/PaymentMethodSelector'
 import { useNewMember } from '@/features/members/hooks/useNewMember'
 
 export default function NewMemberPage() {
@@ -23,6 +23,12 @@ export default function NewMemberPage() {
   if (loading) {
     return (
       <div className="space-y-4">
+        <BreadCrumb
+          crumbs={[
+            { label: 'Socios', href: '/administrativo/socios' },
+            { label: 'Nuevo Socio' },
+          ]}
+        />
         <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
             Nuevo Socio
@@ -37,7 +43,12 @@ export default function NewMemberPage() {
 
   return (
     <div className="space-y-4">
-      <BreadCrumb />
+      <BreadCrumb
+        crumbs={[
+          { label: 'Socios', href: '/administrativo/socios' },
+          { label: 'Nuevo Socio' },
+        ]}
+      />
       <section className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           Nuevo Socio
@@ -47,7 +58,7 @@ export default function NewMemberPage() {
         </p>
       </section>
 
-      <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
+      <div>
         <MemberForm onSubmit={handleSubmit} />
       </div>
 

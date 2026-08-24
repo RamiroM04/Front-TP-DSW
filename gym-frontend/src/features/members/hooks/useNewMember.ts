@@ -1,11 +1,11 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { type CreateMemberInput } from '@/features/members/models/Member'
+import { type CreateMemberInput, type UpdateMemberInput } from '@/features/members/models/Member'
 import { memberService } from '@/features/members/api/memberService'
 import { membershipPlanService } from '@/features/membershipPlans/api/membershipPlanService'
 import { type MembershipPlan } from '@/features/membershipPlans/models/MembershipPlan'
-import { type PaymentMethodId } from '@/features/members/components/PaymentMethodSelector'
+import { type PaymentMethodId } from '@/features/memberships/components/PaymentMethodSelector'
 
 export function useNewMember() {
   const navigate = useNavigate()
@@ -51,7 +51,7 @@ export function useNewMember() {
     return nextDueDate
   }, [selectedPlanId, plans, activationDate])
 
-  const handleSubmit = async (data: CreateMemberInput) => {
+  const handleSubmit = async (data: CreateMemberInput | UpdateMemberInput) => {
     try {
       if (!selectedPlanId) {
         toast.error('Debes seleccionar un plan')

@@ -75,7 +75,7 @@ export default function MemberForm({
         </div>
       )}
 
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <label htmlFor="name" className="text-sm font-medium">
             Nombre
@@ -83,7 +83,6 @@ export default function MemberForm({
           <Input
             id="name"
             name="name"
-            placeholder="Nombre"
             value={formData.name}
             onChange={handleChange}
             required
@@ -97,7 +96,6 @@ export default function MemberForm({
           <Input
             id="surname"
             name="surname"
-            placeholder="Apellido"
             value={formData.surname}
             onChange={handleChange}
             required
@@ -124,7 +122,6 @@ export default function MemberForm({
           <Input
             id="docNumber"
             name="docNumber"
-            placeholder="12345678"
             value={formData.docNumber}
             onChange={handleChange}
             required
@@ -156,7 +153,6 @@ export default function MemberForm({
             id="email"
             name="email"
             type="email"
-            placeholder="correo@ejemplo.com"
             value={formData.email}
             onChange={handleChange}
             required
@@ -170,7 +166,6 @@ export default function MemberForm({
           <Input
             id="phone"
             name="phone"
-            placeholder="+54 9 11 1234 5678"
             value={formData.phone || ''}
             onChange={handleChange}
           />

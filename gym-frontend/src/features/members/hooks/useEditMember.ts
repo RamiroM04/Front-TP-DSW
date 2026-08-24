@@ -7,7 +7,7 @@ import { type MembershipPlan } from '@/features/membershipPlans/models/Membershi
 import { memberService } from '@/features/members/api/memberService'
 import { membershipService } from '@/features/memberships/api/membershipService'
 import { membershipPlanService } from '@/features/membershipPlans/api/membershipPlanService'
-import { type PaymentMethodId } from '@/features/members/components/PaymentMethodSelector'
+import { type PaymentMethodId } from '@/features/memberships/components/PaymentMethodSelector'
 
 export function useEditMember() {
   const { id } = useParams()
