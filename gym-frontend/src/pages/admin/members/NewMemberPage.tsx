@@ -6,21 +6,21 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
+} from '@/shared/components/ui/card'
+import { Checkbox } from '@/shared/components/ui/checkbox'
 import { CreditCard, HandCoins, Landmark } from 'lucide-react'
 import { toast } from 'sonner'
 
 
-import { type CreateMemberInput, type Member, type UpdateMemberInput } from '../../../models/Member'
-import { type Membership } from '../../../models/Membership'
-import { memberService } from '@/services/memberService'
-import { membershipPlanService } from '@/services/membershipPlanService'
-import { membershipService } from '@/services/membershipService'
-import { type MembershipPlan } from '../../../models/MembershipPlan'
-import MemberForm from '../../../components/admin/MemberForm'
-import BreadCrumb from '@/components/BreadCrumb'
-import { Button } from '@/components/ui/button'
+import { type CreateMemberInput, type Member, type UpdateMemberInput } from '@/features/members/models/Member'
+import { type Membership } from '@/features/memberships/models/Membership'
+import { memberService } from '@/features/members/api/memberService'
+import { membershipPlanService } from '@/features/membershipPlans/api/membershipPlanService'
+import { membershipService } from '@/features/memberships/api/membershipService'
+import { type MembershipPlan } from '@/features/membershipPlans/models/MembershipPlan'
+import MemberForm from '@/features/members/components/MemberForm'
+import BreadCrumb from '@/shared/components/BreadCrumb'
+import { Button } from '@/shared/components/ui/button'
 
 const paymentMethods = [
   { id: 'CREDIT_CARD', label: 'Tarjeta', icon: CreditCard },

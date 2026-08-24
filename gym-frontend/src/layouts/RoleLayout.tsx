@@ -1,15 +1,15 @@
 import { Outlet } from "react-router-dom"
-import RoleBottomNav from "@/components/RoleBottomNav"
-import RoleSidebar from "@/components/RoleSidebar"
+import RoleBottomNav from "@/shared/components/RoleBottomNav"
+import RoleSidebar from "@/shared/components/RoleSidebar"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { ROLE_NAVIGATION, type AppRole } from "@/lib/sidebars"
+} from "@/shared/components/ui/sidebar"
+import { ROLE_NAVIGATION, type AppRole } from "@/config/navigation"
 //import { Avatar } from "@/components/ui/avatar"
 import { Bell, Settings, CircleUser } from "lucide-react"
-import { ThemeToggle } from "@/components/ThemeToggle"
+import { ThemeToggle } from "@/shared/components/ThemeToggle"
 
 export default function RoleLayout({
   role,

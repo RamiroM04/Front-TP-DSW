@@ -3,18 +3,18 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { CreditCard, HandCoins, Landmark } from 'lucide-react'
 
-import BreadCrumb from '@/components/BreadCrumb'
-import { Button } from '@/components/ui/button'
-import MemberForm from '@/components/admin/MemberForm'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
+import BreadCrumb from '@/shared/components/BreadCrumb'
+import { Button } from '@/shared/components/ui/button'
+import MemberForm from '@/features/members/components/MemberForm'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { Checkbox } from '@/shared/components/ui/checkbox'
 
-import { type Member, type UpdateMemberInput } from '@/models/Member'
-import { type Membership } from '@/models/Membership'
-import { memberService } from '@/services/memberService'
-import { membershipService } from '@/services/membershipService'
-import { membershipPlanService } from '@/services/membershipPlanService'
-import { type MembershipPlan } from '@/models/MembershipPlan'
+import { type Member, type UpdateMemberInput } from '@/features/members/models/Member'
+import { type Membership } from '@/features/memberships/models/Membership'
+import { memberService } from '@/features/members/api/memberService'
+import { membershipService } from '@/features/memberships/api/membershipService'
+import { membershipPlanService } from '@/features/membershipPlans/api/membershipPlanService'
+import { type MembershipPlan } from '@/features/membershipPlans/models/MembershipPlan'
 
 const paymentMethods = [
   { id: 'CREDIT_CARD', label: 'Tarjeta', icon: CreditCard },
@@ -64,7 +64,7 @@ export default function EditMemberPage() {
           setSelectedPaymentMethod(membershipData.lastPaymentMethod as typeof paymentMethods[number]['id'])
         }
 
-        const plansData = await membershipPlanService.getAllMembershipPlans()
+        const plansData = await membershipPlanService.getAll()
         setPlans(plansData)
       } catch (err) {
         const errorMessage =

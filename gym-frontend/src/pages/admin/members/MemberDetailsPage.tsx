@@ -2,18 +2,18 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { RiEditLine } from '@remixicon/react'
 
-import BreadCrumb from '@/components/BreadCrumb'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import BreadCrumb from '@/shared/components/BreadCrumb'
+import { Badge } from '@/shared/components/ui/badge'
+import { Button } from '@/shared/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { toast } from 'sonner'
 
-import type { Member } from '@/models/Member'
-import { type Membership } from '@/models/Membership'
-import { memberService } from '@/services/memberService'
-import { membershipService } from '@/services/membershipService'
-import { membershipPlanService } from '@/services/membershipPlanService'
-import { type MembershipPlan } from '@/models/MembershipPlan'
+import type { Member } from '@/features/members/models/Member'
+import { type Membership } from '@/features/memberships/models/Membership'
+import { memberService } from '@/features/members/api/memberService'
+import { membershipService } from '@/features/memberships/api/membershipService'
+import { membershipPlanService } from '@/features/membershipPlans/api/membershipPlanService'
+import { type MembershipPlan } from '@/features/membershipPlans/models/MembershipPlan'
 
 const statusVariant = {
   ACTIVE: 'default',
@@ -58,7 +58,7 @@ export default function MemberDetailsPage() {
         )
         setMembership(membershipData)
 
-        const planData = await membershipPlanService.getMembershipPlanById(
+        const planData = await membershipPlanService.getById(
           membershipData.membershipPlanId
         )
         setPlan(planData)
