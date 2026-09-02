@@ -48,7 +48,7 @@ export const memberService = {
 
   async update(id: number, data: UpdateMemberInput): Promise<Member> {
     const response = await fetch(`${baseUrl}/api/members/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },

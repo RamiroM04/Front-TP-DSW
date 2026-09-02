@@ -46,7 +46,7 @@ export const membershipService = {
     },
   ): Promise<Membership> {
     const response = await fetch(`${baseUrl}/api/memberships/${membershipId}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
