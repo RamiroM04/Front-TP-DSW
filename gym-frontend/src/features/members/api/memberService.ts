@@ -15,6 +15,14 @@ export const memberService = {
     return response.json();
   },
 
+  async getAllMembersWithMembership() {
+    const response = await fetch(`${baseUrl}/api/members/with-membership`);
+    if (!response.ok) {
+      throw new Error('Error al obtener miembros con membresia');
+    }
+    return response.json();
+  },
+
   async getMemberById(id: number): Promise<Member> {
     const response = await fetch(`${baseUrl}/api/members/${id}`);
     if (!response.ok) {
