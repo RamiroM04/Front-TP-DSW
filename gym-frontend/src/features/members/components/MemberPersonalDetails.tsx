@@ -19,7 +19,7 @@ export function MemberPersonalDetails({ member }: MemberPersonalDetailsProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Detalles personales</CardTitle>
+        <CardTitle>Información personal</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -37,13 +37,7 @@ export function MemberPersonalDetails({ member }: MemberPersonalDetailsProps) {
           </div>
           <div className="space-y-1">
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              Tipo de documento
-            </p>
-            <p className="text-sm font-medium">{member.docType}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              Nº de documento
+              N° de documento ({member.docType})
             </p>
             <p className="text-sm font-medium">{member.docNumber}</p>
           </div>
@@ -54,12 +48,6 @@ export function MemberPersonalDetails({ member }: MemberPersonalDetailsProps) {
             <p className="text-sm font-medium">
               {formatDate(member.birthDate)}
             </p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              Socio desde
-            </p>
-            <p className="text-sm font-medium">{formatDate(member.createdAt)}</p>
           </div>
         </div>
       </CardContent>

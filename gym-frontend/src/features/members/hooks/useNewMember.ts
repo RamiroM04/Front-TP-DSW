@@ -5,7 +5,7 @@ import { type CreateMemberInput, type UpdateMemberInput } from '@/features/membe
 import { memberService } from '@/features/members/api/memberService'
 import { membershipPlanService } from '@/features/membershipPlans/api/membershipPlanService'
 import { type MembershipPlan } from '@/features/membershipPlans/models/MembershipPlan'
-import { type PaymentMethodId } from '@/features/memberships/components/PaymentMethodSelector'
+import { type PaymentMethodId } from '@/features/payments/components/PaymentForm'
 
 export function useNewMember() {
   const navigate = useNavigate()
@@ -14,6 +14,7 @@ export function useNewMember() {
   const [loading, setLoading] = useState(true)
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null)
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethodId>('CASH')
+  const [includePayment, setIncludePayment] = useState(true)
 
   useEffect(() => {
     const loadData = async () => {
@@ -35,9 +36,33 @@ export function useNewMember() {
     loadData()
   }, [navigate])
 
+  const totalAmount = useMemo(() => {
+    if (!includePayment) {
+      return 0
+    }
+
+    if (selectedPlanId && plans.length > 0) {
+      const plan = plans.find((p) => p.id === selectedPlanId)
+      if (plan) {
+        return plan.price
+      }
+    }
+    return 0
+  }, [includePayment, selectedPlanId, plans])
+
   const activationDate = useMemo(() => new Date(), [])
 
+  const freeTrialExpirationDate = useMemo(() => {
+    const nextDueDate = new Date(activationDate)
+    nextDueDate.setDate(nextDueDate.getDate() + 5)
+    return nextDueDate
+  }, [activationDate])
+
   const expirationDate = useMemo(() => {
+    if (!includePayment) {
+      return freeTrialExpirationDate
+    }
+
     if (selectedPlanId && plans.length > 0) {
       const plan = plans.find((p) => p.id === selectedPlanId)
       if (plan) {
@@ -49,7 +74,7 @@ export function useNewMember() {
     const nextDueDate = new Date(activationDate)
     nextDueDate.setMonth(nextDueDate.getMonth() + 1)
     return nextDueDate
-  }, [selectedPlanId, plans, activationDate])
+  }, [includePayment, selectedPlanId, plans, activationDate, freeTrialExpirationDate])
 
   const handleSubmit = async (data: CreateMemberInput | UpdateMemberInput) => {
     try {
@@ -58,13 +83,18 @@ export function useNewMember() {
         return
       }
 
-      const dataWithPlan = {
-        ...data,
+      const dataWithPlan: CreateMemberInput = {
+        ...(data as Omit<CreateMemberInput, 'membershipPlanId' | 'payment'>),
         membershipPlanId: selectedPlanId,
-        lastPaymentMethod: selectedPaymentMethod,
-        lastPaymentDate: activationDate.toISOString(),
-        lastPaymentAmount: plans.find((p) => p.id === selectedPlanId)?.price || 0,
-      } as CreateMemberInput
+        ...(includePayment
+          ? {
+              payment: {
+                amount: totalAmount,
+                method: selectedPaymentMethod,
+              },
+            }
+          : {}),
+      }
 
       await memberService.create(dataWithPlan)
       toast.success('Socio creado correctamente')
@@ -83,6 +113,9 @@ export function useNewMember() {
     setSelectedPlanId,
     selectedPaymentMethod,
     setSelectedPaymentMethod,
+    includePayment,
+    setIncludePayment,
+    totalAmount,
     activationDate,
     expirationDate,
     handleSubmit,

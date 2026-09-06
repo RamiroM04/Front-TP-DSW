@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import BreadCrumb from '@/shared/components/BreadCrumb'
 import { Button } from '@/shared/components/ui/button'
+import { Checkbox } from '@/shared/components/ui/checkbox'
 import MemberForm from '@/features/members/components/MemberForm'
 import PlanSelector from '@/features/membershipPlans/components/PlanSelector'
-import PaymentMethodSelector from '@/features/memberships/components/PaymentMethodSelector'
+import PaymentMethodSelector from '@/features/payments/components/PaymentForm'
 import { useNewMember } from '@/features/members/hooks/useNewMember'
 
 export default function NewMemberPage() {
@@ -15,6 +16,9 @@ export default function NewMemberPage() {
     setSelectedPlanId,
     selectedPaymentMethod,
     setSelectedPaymentMethod,
+    includePayment,
+    setIncludePayment,
+    totalAmount,
     activationDate,
     expirationDate,
     handleSubmit,
@@ -62,18 +66,44 @@ export default function NewMemberPage() {
         <MemberForm onSubmit={handleSubmit} />
       </div>
 
-      <PlanSelector
-        plans={plans}
-        selectedPlanId={selectedPlanId}
-        onSelectPlan={setSelectedPlanId}
-      />
+      <section className="rounded-xl border bg-background px-4 py-4 sm:px-6 sm:py-6">
+        <div className="mb-4 space-y-1">
+          <h2 className="text-lg font-semibold">Seleccionar Plan</h2>
+          <p className="text-sm text-muted-foreground">Elegí un plan para el nuevo socio.</p>
+        </div>
+        <PlanSelector
+          plans={plans}
+          selectedPlanId={selectedPlanId}
+          onSelectPlan={setSelectedPlanId}
+        />
+      </section>
 
-      <PaymentMethodSelector
-        selectedMethod={selectedPaymentMethod}
-        onSelectMethod={setSelectedPaymentMethod}
-        activationDate={activationDate}
-        expirationDate={expirationDate}
-      />
+      <section className="gap-4 rounded-xl border bg-background px-4 py-4 sm:px-6">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold">Método de Pago</h2>
+            <p className="text-sm text-muted-foreground">
+              {includePayment ? `Seleccioná cómo se realizará el pago de la membresía.` : `No se registrará un pago inicial. La membresía se activa con 5 días de prueba.`}
+            </p>
+          </div>
+          <Checkbox
+            id="include-initial-payment"
+            checked={includePayment}
+            onCheckedChange={(checked) => setIncludePayment(checked === true)}
+            aria-label="Registrar pago inicial"
+            className="mt-1 shrink-0"
+          />
+        </div>
+
+        <PaymentMethodSelector
+          selectedMethod={selectedPaymentMethod}
+          onSelectMethod={setSelectedPaymentMethod}
+          totalAmount={totalAmount}
+          activationDate={activationDate}
+          expirationDate={expirationDate}
+          disabled={!includePayment}
+        />
+      </section>
 
       <section className="flex justify-end gap-2">
         <Button

@@ -1,4 +1,4 @@
-import { type Membership } from '../models/Membership';
+import { type Membership, type MembershipStatus } from '../models/Membership';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000';
 
@@ -16,11 +16,10 @@ export const membershipService = {
   async create(data: {
     memberId: number;
     membershipPlanId: number;
-    startDate: string;
-    endDate: string;
-    lastPaymentMethod?: string;
-    lastPaymentDate?: string;
-    lastPaymentAmount?: number;
+    payment?: {
+      amount: number;
+      method: string;
+    };
   }): Promise<Membership> {
     const response = await fetch(`${baseUrl}/api/memberships`, {
       method: 'POST',
@@ -39,14 +38,11 @@ export const membershipService = {
     membershipId: number,
     data: {
       membershipPlanId?: number;
-      lastPaymentMethod?: string;
-      lastPaymentDate?: string;
-      lastPaymentAmount?: number;
-      endDate?: string;
+      status?: MembershipStatus;
     },
   ): Promise<Membership> {
     const response = await fetch(`${baseUrl}/api/memberships/${membershipId}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
