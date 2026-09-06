@@ -20,7 +20,7 @@ export function MembershipPlansHeader({ totalPlans, onNew }: MembershipPlansHead
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="px-3 py-1 text-xs sm:text-sm">
-              Total planes: {totalPlans}
+              Total de planes: {totalPlans}
             </Badge>
           </div>
         </div>

@@ -37,7 +37,7 @@ export default function RoleSidebar({
             className="flex w-full items-center gap-2 rounded-md px-2 py-1 transition-[width,padding,gap,margin] duration-200 ease-in-out group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:px-0"
           >
             <Dumbbell className="size-6 shrink-0 group-data-[collapsible=icon]:mx-auto" aria-hidden="true" />
-            <span className="max-w-32 overflow-hidden whitespace-nowrap font-semibold opacity-100 transition-[max-width,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0">
+            <span className="text-lg overflow-hidden whitespace-nowrap font-semibold opacity-100 transition-[max-width,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0">
               {title}
             </span>
           </NavLink>
@@ -53,7 +53,7 @@ export default function RoleSidebar({
               <SidebarMenuButton asChild tooltip={link.label}>
                 <NavLink to={link.to} end={link.to.endsWith("/")}>
                   {link.icon ? <link.icon aria-hidden="true" /> : null}
-                  <span className="max-w-40 overflow-hidden whitespace-nowrap opacity-100 transition-[max-width,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0">
+                  <span className="text-lg max-w-40 overflow-hidden whitespace-nowrap opacity-100 transition-[max-width,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0">
                     {link.label}
                   </span>
                 </NavLink>
@@ -64,6 +64,6 @@ export default function RoleSidebar({
       </SidebarContent>
 
       {footer ? <SidebarFooter>{footer}</SidebarFooter> : null}
-    </Sidebar>
+    </Sidebar >
   )
 }

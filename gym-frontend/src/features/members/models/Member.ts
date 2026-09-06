@@ -27,15 +27,19 @@ export type CreateMemberInput = {
   birthDate: string;
   status: Status;
   membershipPlanId: number;
-  lastPaymentMethod?:
-    | 'CREDIT_CARD'
-    | 'DEBIT_CARD'
-    | 'TRANSFER'
-    | 'CASH'
-    | 'OTHER';
-  lastPaymentDate?: string;
-  lastPaymentAmount?: number;
+  payment?: {
+    amount: number;
+    method: PaymentMethod;
+  };
 };
+
+export type PaymentMethod =
+  | 'CREDIT_CARD'
+  | 'DEBIT_CARD'
+  | 'TRANSFER'
+  | 'CASH'
+  | 'OTHER';
+
 export type UpdateMemberInput = Partial<
   Omit<Member, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
 >;

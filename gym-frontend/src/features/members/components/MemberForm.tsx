@@ -20,8 +20,6 @@ export default function MemberForm({
   member,
   onSubmit,
 }: MemberFormProps) {
-  const [error, setError] = useState<string | null>(null)
-
   const [formData, setFormData] = useState<CreateMemberInput>({
     name: member?.name || '',
     surname: member?.surname || '',
@@ -47,26 +45,22 @@ export default function MemberForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
 
-    try {
-      const dataToSubmit: CreateMemberInput | UpdateMemberInput = member
-        ? {
-          name: formData.name,
-          surname: formData.surname,
-          email: formData.email,
-          phone: formData.phone,
-          docType: formData.docType,
-          docNumber: formData.docNumber,
-          birthDate: formData.birthDate,
-          status: formData.status
-        }
-        : formData
+    const dataToSubmit: CreateMemberInput | UpdateMemberInput = member
+      ? {
+        name: formData.name,
+        surname: formData.surname,
+        email: formData.email,
+        phone: formData.phone,
+        docType: formData.docType,
+        docNumber: formData.docNumber,
+        birthDate: formData.birthDate,
+        status: formData.status
+      }
+      : formData
 
-      await onSubmit(dataToSubmit)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido')
-    }
+    // errors are surfaced via toast by the submit handler passed in
+    await onSubmit(dataToSubmit)
   }
 
   return (
@@ -75,12 +69,6 @@ export default function MemberForm({
         <User className="size-5" aria-hidden="true" />
         {member ? 'Editar socio' : 'Información del socio'}
       </h3>
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
-        </div>
-      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">

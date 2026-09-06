@@ -1,11 +1,11 @@
 import BreadCrumb from '@/shared/components/BreadCrumb'
 import MemberDetailsHeader from '@/features/members/components/MemberDetailsHeader'
 import MemberPersonalDetails from '@/features/members/components/MemberPersonalDetails'
-import MemberCurrentMembership from '@/features/members/components/MemberCurrentMembership'
+import CurrentMembershipInfo from '@/features/memberships/components/CurrentMembershipInfo'
 import { useMemberDetails } from '@/features/members/hooks/useMemberDetails'
 
 export default function MemberDetailsPage() {
-  const { member, membership, plan, loading } = useMemberDetails()
+  const { member, membership, plan, loading, refreshMembership } = useMemberDetails()
 
   if (loading) {
     return (
@@ -54,7 +54,11 @@ export default function MemberDetailsPage() {
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(250px,1fr)] lg:items-start">
         <MemberPersonalDetails member={member} />
-        <MemberCurrentMembership membership={membership} plan={plan} />
+        <CurrentMembershipInfo
+          membership={membership}
+          plan={plan}
+          onPaymentRegistered={refreshMembership}
+        />
       </section>
     </div>
   )

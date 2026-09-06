@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import type { Member } from '@/features/members/models/Member'
@@ -17,6 +17,15 @@ export function useMemberDetails() {
   const [plan, setPlan] = useState<MembershipPlan | null>(null)
   const [loading, setLoading] = useState(true)
 
+  const refreshMembership = useCallback(async () => {
+    if (!id) return
+
+    const membershipData = await membershipService.getMembershipByMemberId(Number(id))
+    setMembership(membershipData)
+    const planData = await membershipPlanService.getById(membershipData.membershipPlanId)
+    setPlan(planData)
+  }, [id])
+
   useEffect(() => {
     const loadMemberDetails = async () => {
       try {
@@ -31,11 +40,7 @@ export function useMemberDetails() {
         const memberData = await memberService.getMemberById(Number(id))
         setMember(memberData)
 
-        const membershipData = await membershipService.getMembershipByMemberId(Number(id))
-        setMembership(membershipData)
-
-        const planData = await membershipPlanService.getById(membershipData.membershipPlanId)
-        setPlan(planData)
+        await refreshMembership()
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Error al cargar perfil'
         toast.error(errorMessage)
@@ -46,7 +51,7 @@ export function useMemberDetails() {
     }
 
     loadMemberDetails()
-  }, [id, navigate])
+  }, [id, navigate, refreshMembership])
 
   return {
     id,
@@ -54,5 +59,6 @@ export function useMemberDetails() {
     membership,
     plan,
     loading,
+    refreshMembership,
   }
 }

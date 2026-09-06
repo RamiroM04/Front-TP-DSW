@@ -2,26 +2,11 @@ import { useNavigate } from 'react-router-dom'
 import BreadCrumb from '@/shared/components/BreadCrumb'
 import { Button } from '@/shared/components/ui/button'
 import MemberForm from '@/features/members/components/MemberForm'
-import PlanSelector from '@/features/membershipPlans/components/PlanSelector'
-import PaymentMethodSelector from '@/features/memberships/components/PaymentMethodSelector'
 import { useEditMember } from '@/features/members/hooks/useEditMember'
 
 export default function EditMemberPage() {
   const navigate = useNavigate()
-  const {
-    id,
-    member,
-    membership,
-    plans,
-    loading,
-    selectedPlanId,
-    setSelectedPlanId,
-    selectedPaymentMethod,
-    setSelectedPaymentMethod,
-    activationDate,
-    expirationDate,
-    handleSubmit,
-  } = useEditMember()
+  const { id, member, loading, handleSubmit } = useEditMember()
 
   if (loading) {
     return (
@@ -44,7 +29,7 @@ export default function EditMemberPage() {
     )
   }
 
-  if (!member || !membership) {
+  if (!member) {
     return (
       <div className="space-y-4">
         <BreadCrumb
@@ -77,29 +62,13 @@ export default function EditMemberPage() {
           Edición de Socio
         </h1>
         <p className="mt-1 text-sm text-muted-foreground sm:text-base">
-          Edita los datos del socio, plan y método de pago según sea necesario.
+          Edita los datos del socio según sea necesario.
         </p>
       </section>
 
       <div>
         <MemberForm member={member} onSubmit={handleSubmit} />
       </div>
-
-      <PlanSelector
-        plans={plans}
-        selectedPlanId={selectedPlanId}
-        onSelectPlan={setSelectedPlanId}
-        title="Selección de Plan"
-        description="Cambiar el plan de membresía."
-      />
-
-      <PaymentMethodSelector
-        selectedMethod={selectedPaymentMethod}
-        onSelectMethod={setSelectedPaymentMethod}
-        activationDate={activationDate}
-        expirationDate={expirationDate}
-        description="Cambiar el método de pago de la membresía."
-      />
 
       <section className="flex justify-end gap-2">
         <Button

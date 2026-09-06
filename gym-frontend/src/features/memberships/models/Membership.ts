@@ -1,9 +1,5 @@
-export type PaymentMethod =
-  | 'CREDIT_CARD'
-  | 'DEBIT_CARD'
-  | 'TRANSFER'
-  | 'CASH'
-  | 'OTHER';
+export type MembershipStatus = 'ACTIVE' | 'CANCELLED' | 'EXPIRED';
+export type MembershipStatusBadgeVariant = 'default' | 'outline' | 'destructive';
 
 export type Membership = {
   id: number;
@@ -11,11 +7,18 @@ export type Membership = {
   membershipPlanId: number;
   startDate: string;
   endDate: string;
-  status: 'ACTIVE' | 'EXPIRED' | 'CANCELED';
-  lastPaymentMethod?: PaymentMethod | null;
-  lastPaymentDate?: string | null;
-  lastPaymentAmount?: number | null;
+  status: MembershipStatus;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
 };
+
+export const MEMBERSHIP_STATUS = [
+  { id: 'ACTIVE', label: 'Activa', variant: 'default' },
+  { id: 'CANCELLED', label: 'Cancelada', variant: 'destructive' },
+  { id: 'EXPIRED', label: 'Vencida', variant: 'outline' },
+] as const satisfies ReadonlyArray<{
+  id: MembershipStatus;
+  label: string;
+  variant: MembershipStatusBadgeVariant;
+}>;

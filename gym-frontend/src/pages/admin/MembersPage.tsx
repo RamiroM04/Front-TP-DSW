@@ -8,7 +8,6 @@ export default function MembersPage() {
   const {
     members,
     loading,
-    error,
     activeCount,
     inactiveCount,
     totalCount,
@@ -38,12 +37,6 @@ export default function MembersPage() {
         totalCount={totalCount}
         onNew={() => navigate('/administrativo/socios/nuevo')}
       />
-
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 sm:px-6">
-          <p className="text-sm text-red-800">{error}</p>
-        </div>
-      )}
 
       <div className="rounded-xl border bg-background px-4 py-2 sm:px-6 sm:py-6">
         <MembersDataTable

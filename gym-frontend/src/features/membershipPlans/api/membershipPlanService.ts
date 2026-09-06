@@ -41,7 +41,7 @@ export const membershipPlanService = {
 
   async update(id: number, data: UpdateMembershipPlanInput): Promise<MembershipPlan> {
     const response = await fetch(`${baseUrl}/api/membership-plans/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
