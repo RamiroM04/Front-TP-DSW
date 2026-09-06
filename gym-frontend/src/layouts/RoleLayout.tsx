@@ -27,12 +27,12 @@ export default function RoleLayout({
         <SidebarInset className="flex min-h-screen flex-1 flex-col">
           <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger className="hidden md:inline-flex" />
-            <span className="text-lg font-medium">Portal {title}</span>
+            <span className="text-2xl font-medium">Portal {title}</span>
             <div className="ml-auto flex items-center gap-3">
               <ThemeToggle />
-              <Bell className="h-4 w-4" /> {/* TODO: Implementar con componente: A notification icon component in React typically combines a SVG bell icon with an absolute-positioned badge element to display the unread alert count*/}
-              <Settings className="h-4 w-4" />
-              <CircleUser className="h-4 w-4" /> {/* TODO: Implementar con componente Avatar */}
+              <Bell className="h-5 w-5" /> {/* TODO: Implementar con componente: A notification icon component in React typically combines a SVG bell icon with an absolute-positioned badge element to display the unread alert count*/}
+              <Settings className="h-5 w-5" />
+              <CircleUser className="h-5 w-5" /> {/* TODO: Implementar con componente Avatar */}
             </div>
           </header>
 
