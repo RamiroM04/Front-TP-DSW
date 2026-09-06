@@ -4,7 +4,6 @@ import {
   RiMoreLine,
   RiPencilLine,
 } from "@remixicon/react"
-import { toast } from "sonner"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import {
@@ -27,7 +26,7 @@ import type { MembershipPlan } from "@/features/membershipPlans/models/Membershi
 type PlansDataTableProps = {
   plans: MembershipPlan[]
   onEdit: (plan: MembershipPlan) => void
-  onDelete: (id: number) => void
+  onDelete: (id: number) => Promise<void>
   title?: string
   subtitle?: string
 }
@@ -40,10 +39,13 @@ function formatPrice(value: number) {
 }
 
 export default function PlansDataTable({ plans, onEdit, onDelete, title, subtitle }: PlansDataTableProps) {
-  // Elimina un plan y avisa con un toast.
-  function handleDelete(plan: MembershipPlan) {
-    onDelete(plan.id)
-    toast("Plan eliminado", { description: `${plan.name} fue eliminado.` })
+  // Elimina un plan; el hook ya avisa el resultado con un toast.
+  async function handleDelete(plan: MembershipPlan) {
+    try {
+      await onDelete(plan.id)
+    } catch {
+      // error already surfaced via toast
+    }
   }
 
   return (
@@ -60,11 +62,11 @@ export default function PlansDataTable({ plans, onEdit, onDelete, title, subtitl
         <Table>
           <TableHeader>
             <TableRow className="border-b border-border bg-muted/40 hover:bg-muted/40">
-              <TableHead className="h-9 pl-4 text-left">Plan</TableHead>
-              <TableHead className="h-9 text-center">Precio</TableHead>
-              <TableHead className="h-9 text-center">Duración</TableHead>
-              <TableHead className="h-9 text-left">Descripción</TableHead>
-              <TableHead className="h-9 text-center">
+              <TableHead className="h-10 pl-4 text-left text-sm font-medium tracking-wide text-muted-foreground uppercase">Plan</TableHead>
+              <TableHead className="h-10 text-center text-sm font-medium tracking-wide text-muted-foreground uppercase">Precio</TableHead>
+              <TableHead className="h-10 text-center text-sm font-medium tracking-wide text-muted-foreground uppercase">Duración</TableHead>
+              <TableHead className="h-10 text-left text-sm font-medium tracking-wide text-muted-foreground uppercase">Descripción</TableHead>
+              <TableHead className="h-10 text-center">
                 <span className="sr-only">Acciones</span>
               </TableHead>
             </TableRow>
@@ -76,20 +78,20 @@ export default function PlansDataTable({ plans, onEdit, onDelete, title, subtitl
                   key={plan.id}
                   className="border-b border-border transition-colors duration-100 last:border-b-0 hover:bg-muted/30"
                 >
-                  <TableCell className="py-3 pl-4 text-left font-medium">{plan.name}</TableCell>
+                  <TableCell className="py-3 pl-4 text-left text-base font-medium">{plan.name}</TableCell>
                   <TableCell className="py-3 text-center">
-                    <Badge variant="secondary">{formatPrice(plan.price)}</Badge>
+                    <Badge variant="secondary" className="text-sm">{formatPrice(plan.price)}</Badge>
                   </TableCell>
-                  <TableCell className="py-3 text-center text-muted-foreground">
+                  <TableCell className="py-3 text-center text-base text-muted-foreground">
                     {plan.durationDays} días
                   </TableCell>
-                  <TableCell className="max-w-xs truncate py-3 text-left text-muted-foreground">
+                  <TableCell className="max-w-xs truncate py-3 text-left text-base text-muted-foreground">
                     {plan.description}
                   </TableCell>
                   <TableCell className="py-3 text-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon-sm" aria-label={`Acciones para ${plan.name}`}>
+                        <Button variant="ghost" size="icon-sm" aria-label={`Acciones para ${plan.name}`} className="size-8">
                           <RiMoreLine className="size-4" aria-hidden="true" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -110,7 +112,7 @@ export default function PlansDataTable({ plans, onEdit, onDelete, title, subtitl
               ))
             ) : (
               <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={5} className="h-24 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={5} className="h-24 text-center text-base text-muted-foreground">
                   No hay planes cargados.
                 </TableCell>
               </TableRow>

@@ -7,13 +7,11 @@ import type { MemberWithMembership } from '@/features/members/models/MemberWithM
 export function useMembers() {
   const [members, setMembers] = useState<ExtendedMember[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadMembers = async () => {
       try {
         setLoading(true);
-        setError(null);
         const data = await memberService.getAllMembersWithMembership();
         const extendedMembers: ExtendedMember[] = (
           data as MemberWithMembership[]
@@ -21,13 +19,13 @@ export function useMembers() {
           ...member,
           plan: member.membership?.membershipPlan?.name || 'Plan no disponible',
           nextExpiration: member.membership?.endDate || member.createdAt,
+          membershipStatus: (member.membership?.status as ExtendedMember['membershipStatus']) || member.status,
         }));
 
         setMembers(extendedMembers);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'Error desconocido';
-        setError(errorMessage);
         toast.error(errorMessage);
       } finally {
         setLoading(false);
@@ -57,7 +55,6 @@ export function useMembers() {
   return {
     members,
     loading,
-    error,
     activeCount,
     inactiveCount,
     totalCount,

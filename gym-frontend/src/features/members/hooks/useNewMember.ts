@@ -102,7 +102,6 @@ export function useNewMember() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
       toast.error(errorMessage)
-      throw err
     }
   }
 

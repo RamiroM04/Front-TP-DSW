@@ -17,7 +17,7 @@ type MembershipPlanFormDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   planToEdit?: MembershipPlan | null
-  onSave: (plan: CreateMembershipPlanInput, id?: number) => void
+  onSave: (plan: CreateMembershipPlanInput, id?: number) => Promise<void>
 }
 
 // Formulario de alta/edición de un plan, dentro de un modal.

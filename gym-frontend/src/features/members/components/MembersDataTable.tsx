@@ -45,7 +45,6 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu"
 import { Input } from "@/shared/components/ui/input"
-import { Toaster } from "@/shared/components/ui/sonner"
 import {
   Table,
   TableBody,
@@ -56,8 +55,8 @@ import {
 } from "@/shared/components/ui/table"
 import { useIsMobile } from "@/shared/hooks/use-mobile"
 
-import type { Status } from "../models/Member"
 import type { ExtendedMember } from "../models/ExtendedMember"
+import { MEMBERSHIP_STATUS } from '@/features/memberships/models/Membership'
 import { useNavigate } from 'react-router-dom'
 
 
@@ -69,17 +68,15 @@ type MembersDataTableProps = {
   onDelete?: (id: number) => void
 }
 
-const statusVariant: Record<Status, "default" | "secondary" | "outline"> = {
-  ACTIVE: "default",
-  INACTIVE: "secondary"
-}
+const membershipStatusVariant = Object.fromEntries(
+  MEMBERSHIP_STATUS.map((status) => [status.id, status.variant])
+) as Record<string, "default" | "outline" | "destructive">
 
 const COLUMN_LABELS: Record<string, string> = {
   name: "Socio",
   status: "Estado",
   plan: "Plan",
   nextExpiration: "Próximo Vencimiento",
-  createdAt: "Fecha de Inscripción",
 }
 
 const dateFmt = new Intl.DateTimeFormat("es-ES", {
@@ -120,7 +117,7 @@ export default function MembersDataTable({
 
   const isMobile = useIsMobile()
   const [sorting, setSorting] = React.useState<SortingState>([
-    { id: "createdAt", desc: true },
+    { id: "nextExpiration", desc: true },
   ])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -170,7 +167,7 @@ export default function MembersDataTable({
         <button
           type="button"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="-mx-1 inline-flex items-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
+          className="-mx-1 inline-flex items-center gap-1 rounded-none px-1 text-sm font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
         >
           Socio
           <SortIcon sorted={column.getIsSorted()} />
@@ -187,10 +184,10 @@ export default function MembersDataTable({
       cell: ({ row }) => {
         const member = row.original
         return (
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="min-w-0">
-              <p className="truncate text-sm leading-tight font-medium">{member.name} {member.surname}</p>
-              <p className="truncate text-xs text-muted-foreground">{member.email}</p>
+          <div className="flex min-w-0 w-full items-center justify-start gap-3 text-left">
+            <div className="min-w-0 text-left">
+              <p className="truncate text-base leading-tight font-medium">{member.name} {member.surname}</p>
+              <p className="truncate text-sm text-muted-foreground">{member.email}</p>
             </div>
           </div>
         )
@@ -202,29 +199,39 @@ export default function MembersDataTable({
         <button
           type="button"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="-mx-1 inline-flex items-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
+          className="-mx-1 inline-flex items-center gap-1 rounded-none px-1 text-sm font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
         >
           Plan
           <SortIcon sorted={column.getIsSorted()} />
         </button>
       ),
       cell: ({ row }) => (
-        <span className="text-sm">{row.original.plan || 'Sin plan'}</span>
+        <span className="text-base">{row.original.plan || 'Sin plan'}</span>
       ),
     },
     {
       accessorKey: "status",
       enableSorting: false,
       header: () => (
-        <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+        <span className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
           Estado
         </span>
       ),
-      cell: ({ row }) => (
-        <Badge variant={statusVariant[row.original.status]} className="text-xs">
-          {row.original.status === 'ACTIVE' ? 'Activo' : 'Inactivo'}
-        </Badge>
-      ),
+      cell: ({ row }) => {
+        const currentMembershipStatus = row.original.membershipStatus ?? row.original.status
+        const membershipStatus = MEMBERSHIP_STATUS.find(
+          (status) => status.id === currentMembershipStatus
+        )
+
+        return (
+          <Badge
+            variant={membershipStatus?.variant ?? membershipStatusVariant[currentMembershipStatus] ?? 'default'}
+            className="text-sm"
+          >
+            {membershipStatus?.label ?? (currentMembershipStatus === 'ACTIVE' ? 'Activo' : 'Inactivo')}
+          </Badge>
+        )
+      },
     },
     {
       accessorKey: "nextExpiration",
@@ -233,38 +240,18 @@ export default function MembersDataTable({
         <button
           type="button"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="-mx-1 inline-flex items-center justify-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
+          className="-mx-1 inline-flex items-center justify-center gap-1 rounded-none px-1 text-sm font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
         >
           Próximo Vencimiento
           <SortIcon sorted={column.getIsSorted()} />
         </button>
       ),
       cell: ({ row }) => (
-        <span className="block text-center text-xs text-muted-foreground tabular-nums">
+        <span className="block text-center text-sm text-muted-foreground tabular-nums">
           {formatDate(row.original.nextExpiration)}
         </span>
       ),
     },
-    {
-      accessorKey: "createdAt",
-      sortingFn: "datetime",
-      header: ({ column }) => (
-        <button
-          type="button"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="-mx-1 inline-flex items-center justify-center gap-1 rounded-none px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase transition-colors hover:text-foreground"
-        >
-          Fecha de Inscripción
-          <SortIcon sorted={column.getIsSorted()} />
-        </button>
-      ),
-      cell: ({ row }) => (
-        <span className="block text-center text-xs text-muted-foreground tabular-nums">
-          {formatDate(row.original.createdAt)}
-        </span>
-      ),
-    },
-
     {
       id: "actions",
       enableSorting: false,
@@ -328,13 +315,12 @@ export default function MembersDataTable({
       if (Object.keys(prev).length > 0) {
         return prev
       }
-      return isMobile ? { nextExpiration: false, createdAt: false } : {}
+      return isMobile ? { nextExpiration: false } : {}
     })
   }, [isMobile])
 
   const nameFilter = (table.getColumn("name")?.getFilterValue() as string) ?? ""
   const selectedCount = table.getFilteredSelectedRowModel().rows.length
-  const totalCount = table.getFilteredRowModel().rows.length
   const pageCount = table.getPageCount()
 
   function handleRemove() {
@@ -381,7 +367,7 @@ export default function MembersDataTable({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="lg"
                   className="shrink-0"
                   aria-label="Toggle columns"
                 >
@@ -421,7 +407,7 @@ export default function MembersDataTable({
               </span>
               <Button
                 variant="ghost"
-                size="xs"
+                size="sm"
                 className="text-muted-foreground hover:text-foreground"
                 onClick={() => table.resetRowSelection()}
               >
@@ -478,11 +464,10 @@ export default function MembersDataTable({
                     <TableHead
                       key={header.id}
                       className={cn(
-                        "h-9 text-center align-middle",
+                        "h-10 text-center align-middle text-sm",
                         header.column.id === "select" && "pl-4 text-left",
                         header.column.id === "name" && "pl-2 text-left",
-                        (header.column.id === "nextExpiration" ||
-                          header.column.id === "createdAt") && "px-3"
+                        header.column.id === "nextExpiration" && "px-3"
                       )}
                     >
                       {header.isPlaceholder
@@ -510,9 +495,8 @@ export default function MembersDataTable({
                         className={cn(
                           "py-3 text-center align-middle",
                           cell.column.id === "select" && "pl-4 text-left",
-                          cell.column.id === "name" && "pl-2",
-                          (cell.column.id === "createdAt" ||
-                            cell.column.id === "nextExpiration") && "px-3"
+                          cell.column.id === "name" && "pl-2 text-left",
+                          cell.column.id === "nextExpiration" && "px-3"
                         )}
                       >
                         {flexRender(
@@ -536,11 +520,7 @@ export default function MembersDataTable({
             </TableBody>
           </Table>
 
-          <div className="flex items-center justify-between gap-4 border-t border-border bg-muted/20 px-4 py-2.5">
-            <p className="text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">{totalCount}</span>{" "}
-              {totalCount === 1 ? "Resultado" : "Resultados"}
-            </p>
+          <div className="flex items-center justify-end gap-4 border-t border-border bg-muted/20 px-4 py-2.5">
             <div className="flex items-center gap-1.5">
               <Button
                 variant="outline"
@@ -552,7 +532,7 @@ export default function MembersDataTable({
               >
                 <RiArrowLeftSLine className="size-3.5" aria-hidden="true" />
               </Button>
-              <span className="px-1 text-xs text-muted-foreground tabular-nums">
+              <span className="px-1 text-sm text-muted-foreground tabular-nums">
                 Página {table.getState().pagination.pageIndex + 1} de{" "}
                 {Math.max(pageCount, 1)}
               </span>
@@ -570,7 +550,6 @@ export default function MembersDataTable({
           </div>
         </div>
       </div>
-      <Toaster />
     </section>
   )
 }

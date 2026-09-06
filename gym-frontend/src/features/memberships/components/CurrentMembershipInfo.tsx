@@ -1,6 +1,6 @@
 import { Badge } from '@/shared/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
-import type { Membership } from '@/features/memberships/models/Membership'
+import { MEMBERSHIP_STATUS, type Membership } from '@/features/memberships/models/Membership'
 import type { MembershipPlan } from '@/features/membershipPlans/models/MembershipPlan'
 import { PaymentRegistrationDialog } from '@/features/payments/components/PaymentForm'
 import { ManageMembershipDialog } from '@/features/memberships/components/ManageMembershipDialog'
@@ -17,20 +17,17 @@ export function MemberCurrentMembership({
   plan,
   onPaymentRegistered,
 }: MemberCurrentMembershipProps) {
-  const membershipStatus = {
-    ACTIVE: 'Activa',
-    CANCELLED: 'Cancelada',
-    EXPIRED: 'Expirada',
-    PENDING: 'Pendiente',
-  }[membership.status]
+  const membershipStatus = MEMBERSHIP_STATUS.find(status => status.id === membership.status)
+  const membershipLabel = membershipStatus?.label || ''
+  const membershipVariant = membershipStatus?.variant || 'default'
 
   return (
     <Card>
       <CardHeader className="flex w-full justify-between">
         <CardTitle className="text-lg font-bold">Membresía</CardTitle>
 
-        <Badge className="px-4 py-3 text-md" variant="outline">
-          {membershipStatus}
+        <Badge className="px-4 py-3 text-md" variant={membershipVariant}>
+          {membershipLabel}
         </Badge>
       </CardHeader>
       <CardContent className="space-y-4">
